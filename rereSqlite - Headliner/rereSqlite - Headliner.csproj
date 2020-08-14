@@ -1,0 +1,88 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <RootNamespace>rereSqlite___Headliner</RootNamespace>
+        <UseWPF>true</UseWPF>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="log4net" Version="2.0.8" />
+      <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="5.0.0-preview.7.20365.15" />
+      <PackageReference Include="SQLitePCLRaw.bundle_e_sqlcipher" Version="2.0.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Page Update="FileSystem\OFWindow.xaml">
+        <Generator></Generator>
+      </Page>
+      <Page Update="Tab\TabPager.xaml">
+        <Generator></Generator>
+      </Page>
+      <Page Update="Pages\FileBrowse.xaml">
+        <Generator></Generator>
+      </Page>
+      <Page Update="Pages\TableList.xaml">
+        <Generator></Generator>
+      </Page>
+      <Page Update="Pages\QueryStringInput.xaml">
+        <Generator></Generator>
+      </Page>
+      <Page Update="Pages\QueryResultViewList.xaml">
+        <Generator></Generator>
+      </Page>
+      <Page Update="Pages\QueryResultView.xaml">
+        <Generator></Generator>
+      </Page>
+      <Page Update="Pages\StringStorage.xaml">
+        <Generator></Generator>
+      </Page>
+      <Page Update="Pages\StringCard.xaml">
+        <Generator></Generator>
+      </Page>
+      <Page Update="Pages\BinaryStorage.xaml">
+        <Generator></Generator>
+      </Page>
+      <Page Update="Pages\BinaryCard.xaml">
+        <Generator></Generator>
+      </Page>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="FileSystem\OFWindow.xaml.cs">
+        <DependentUpon>OFWindow.xaml</DependentUpon>
+      </Compile>
+      <Compile Update="Tab\TabPager.xaml.cs">
+        <DependentUpon>TabPager.xaml</DependentUpon>
+      </Compile>
+      <Compile Update="Pages\FileBrowse.xaml.cs">
+        <DependentUpon>FileBrowse.xaml</DependentUpon>
+      </Compile>
+      <Compile Update="Pages\TableList.xaml.cs">
+        <DependentUpon>TableList.xaml</DependentUpon>
+      </Compile>
+      <Compile Update="Pages\QueryStringInput.xaml.cs">
+        <DependentUpon>QueryStringInput.xaml</DependentUpon>
+      </Compile>
+      <Compile Update="Pages\QueryResultViewList.xaml.cs">
+        <DependentUpon>QueryResultViewList.xaml</DependentUpon>
+      </Compile>
+      <Compile Update="Pages\QueryResultView.xaml.cs">
+        <DependentUpon>QueryResultView.xaml</DependentUpon>
+      </Compile>
+      <Compile Update="Pages\StringStorage.xaml.cs">
+        <DependentUpon>StringStorage.xaml</DependentUpon>
+      </Compile>
+      <Compile Update="Pages\StringCard.xaml.cs">
+        <DependentUpon>StringCard.xaml</DependentUpon>
+      </Compile>
+      <Compile Update="Pages\BinaryStorage.xaml.cs">
+        <DependentUpon>BinaryStorage.xaml</DependentUpon>
+      </Compile>
+      <Compile Update="Pages\BinaryCard.xaml.cs">
+        <DependentUpon>BinaryCard.xaml</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
+</Project>

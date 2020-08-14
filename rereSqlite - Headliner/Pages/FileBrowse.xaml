@@ -1,0 +1,68 @@
+﻿<Page 
+    x:Class="FileBrowse"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    mc:Ignorable="d"
+    Title="FileBrowse">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="2*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="6*" />
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
+        <Label
+            Grid.Row="0"
+            Grid.Column="1"
+            VerticalAlignment="Center">
+            パスワード
+        </Label>
+        <TextBox
+            Grid.Row="1"
+            Grid.Column="1"
+            VerticalAlignment="Stretch"
+            VerticalContentAlignment="Center"
+            x:Name="passwordInput" />
+        <Grid
+            Grid.Row="3"
+            Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="4*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="4*" />
+            </Grid.ColumnDefinitions>
+            <Button
+                Grid.Column="0"
+                Click="Browse_Click">
+                ファイルを開く
+            </Button>
+            <Button
+                Grid.Column="2"
+                Click="NewFile_Click">
+                新規作成
+            </Button>
+        </Grid>
+        <Label
+            Grid.Row="5"
+            Grid.Column="1"
+            VerticalAlignment="Center">
+            開いているファイル
+        </Label>
+        <Label
+            Grid.Row="6"
+            Grid.Column="1"
+            VerticalAlignment="Center"
+            x:Name="filePathOutput" />
+    </Grid>
+</Page>
