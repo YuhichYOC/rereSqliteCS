@@ -81,7 +81,7 @@ public class LogSpooler {
         message.AppendLine();
 
         List<string> SubList(List<string> logLines, int toIndex) {
-            return logLines.GetRange(0, toIndex);
+            return logLines.GetRange(0, toIndex + 1);
         }
 
         StringBuilder AppendedSubList(List<string> appendList, StringBuilder target) {
