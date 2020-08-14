@@ -3,21 +3,21 @@ using System.Linq;
 
 public class NodeEntity {
     private int newNodeId;
-    
+
     private int newDepth;
 
     public string NodeName { get; set; }
-    
+
     public int NodeId { get; set; }
-    
+
     public int Depth { get; set; }
-    
+
     public string NodeValue { get; set; }
-    
+
     public bool IsComment { get; set; }
-    
+
     public List<AttributeEntity> AttrList { get; set; }
-    
+
     public NodeEntity Parent { get; set; }
 
     public List<NodeEntity> Children { get; set; }
@@ -38,7 +38,7 @@ public class NodeEntity {
         newLineAfterAttributes = true;
         newLineAfterNodeValue = true;
     }
-    
+
     public void AddAttr(AttributeEntity arg) {
         AttrList.Add(arg);
     }
@@ -71,7 +71,7 @@ public class NodeEntity {
     public int TailID() {
         return TailID(Root);
     }
-    
+
     private int TailID(NodeEntity node) {
         return 0 < node.Children.Count ? TailID(node.Children[^1]) : node.NodeId;
     }
@@ -79,7 +79,7 @@ public class NodeEntity {
     private int TailDepth() {
         return TailDepth(Root);
     }
-    
+
     private int TailDepth(NodeEntity node) {
         return 0 < node.Children.Count ? node.Children.ConvertAll(TailDepth).Max() : node.Depth;
     }
@@ -166,13 +166,13 @@ public class NodeEntity {
                 pf.Children.RemoveAt(j);
                 break;
             }
-        
+
         for (var i = 0; pt.Children.Count > i; ++i)
             if (moveTo == pt.Children[i].NodeId) {
                 pt.Children.Insert(i, nf);
                 break;
             }
-        
+
         Refresh();
     }
 
@@ -186,7 +186,7 @@ public class NodeEntity {
                 return;
             }
     }
-    
+
     public void Refresh() {
         newNodeId = 0;
         newDepth = 0;
@@ -227,7 +227,7 @@ public class NodeEntity {
     public NodeEntity FindByID(int id) {
         return FindByID(Root, id);
     }
-    
+
     private NodeEntity FindByID(NodeEntity node, int id) {
         foreach (var c in node.Children) {
             if (id == c.NodeId) return c;
@@ -241,7 +241,7 @@ public class NodeEntity {
     public NodeEntity FindTail(int depth) {
         return 1 == depth ? this : FindTail(Children[^1], --depth);
     }
-    
+
     private NodeEntity FindTail(NodeEntity node, int depth) {
         return 1 == depth ? node : FindTail(node.Children[^1], --depth);
     }
@@ -390,11 +390,11 @@ public class NodeEntity {
     public NodeEntity Param(string par1Name, string par2Name) {
         return Command(par1Name).Param(par2Name);
     }
-    
+
     #endregion -- Derivative Find --
-    
+
     #endregion -- Find --
-    
+
     #region -- Writer --
 
     private NodeEntity writerSetting;
@@ -416,7 +416,7 @@ public class NodeEntity {
                 Children.ForEach(c => c.WriterSetting = value);
         }
     }
-    
+
     private int IndentSize {
         get {
             if (writerSetting?.Find(@"Writer") == null || writerSetting.Find(@"Writer").Find(@"Setting") == null ||
@@ -428,7 +428,7 @@ public class NodeEntity {
                 : 2;
         }
     }
-    
+
     private bool NewLineAfterOpeningBracket {
         get {
             if (writerSetting?.Find(@"Writer") == null || writerSetting.Find(@"Writer").Find(@"Setting") == null ||
@@ -439,7 +439,7 @@ public class NodeEntity {
                 .Equals(@"YES");
         }
     }
-    
+
     private bool NewLineAfterClosingBracket {
         get {
             if (writerSetting?.Find(@"Writer") == null || writerSetting.Find(@"Writer").Find(@"Setting") == null ||
@@ -450,7 +450,7 @@ public class NodeEntity {
                 .Equals(@"YES");
         }
     }
-    
+
     private bool NewLineAfterAttributes {
         get {
             if (writerSetting?.Find(@"Writer") == null || writerSetting.Find(@"Writer").Find(@"Setting") == null ||
@@ -461,7 +461,7 @@ public class NodeEntity {
                 .NodeValue.Equals(@"YES");
         }
     }
-    
+
     private bool NewLineAfterNodeValue {
         get {
             if (writerSetting?.Find(@"Writer") == null || writerSetting.Find(@"Writer").Find(@"Setting") == null ||
@@ -472,7 +472,7 @@ public class NodeEntity {
                 .Equals(@"YES");
         }
     }
-    
+
     public override string ToString() {
         var ret = string.Empty;
         if (IsComment) {
@@ -553,6 +553,6 @@ public class NodeEntity {
         for (var i = 0; i < (Depth + plus) * indentSize; i++) ret += @" ";
         return ret;
     }
-    
+
     #endregion -- Writer --
 }

@@ -2,7 +2,7 @@
 
 public class FileSystemTree {
     private FileSystemNode root;
-    
+
     public TreeView OwnTree { get; private set; }
 
     public void Prepare(TreeView arg) {

@@ -19,9 +19,9 @@ public partial class BinaryCard : UserControl {
             FontSize = appBehind.FontSize;
         }
     }
-    
+
     public string Key { get; set; }
-    
+
     public string FileName { get; set; }
 
     public bool HasBeenAnyOperation {

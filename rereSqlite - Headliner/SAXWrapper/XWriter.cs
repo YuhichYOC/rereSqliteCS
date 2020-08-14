@@ -16,7 +16,7 @@ public class XWriter {
     public string FileName {
         set => fileName = value;
     }
-    
+
     public NodeEntity Node {
         set => node = value;
     }

@@ -1,6 +1,6 @@
 ﻿public class AttributeEntity {
     public string AttrName { get; set; }
-    
+
     public string AttrValue { get; set; }
 
     public bool NameEquals(string arg) {

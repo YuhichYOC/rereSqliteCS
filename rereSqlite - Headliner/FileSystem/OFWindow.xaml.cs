@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using rereSqlite___Headliner;
 
 public partial class OFWindow : Window {
     private OperatorEx fileListOperator;
@@ -12,11 +11,11 @@ public partial class OFWindow : Window {
     private FileSystemTreeEx driveTreeOperator;
 
     private bool createNewFile;
-    
+
     public AppBehind AppBehind { get; set; }
-    
+
     public string SelectedPath { get; private set; }
-    
+
     public OFWindow() {
         InitializeComponent();
     }
@@ -42,7 +41,7 @@ public partial class OFWindow : Window {
         driveTreeOperator.CreateNewFile = createNewFile;
         driveTreeOperator.Fill(@"C:\");
     }
-    
+
     private void PrepareFileList() {
         fileListOperator = new OperatorEx {AppBehind = AppBehind};
         fileListOperator.Prepare(fileList);
@@ -55,7 +54,7 @@ public partial class OFWindow : Window {
         createNewFile = true;
         driveTreeOperator.CreateNewFile = true;
     }
-    
+
     private void SwitchDrive() {
         driveTreeOperator.Fill(drives.SelectedItem.ToString());
     }
@@ -91,10 +90,10 @@ public partial class OFWindow : Window {
             AppBehind.AppendError(ex.Message, ex);
         }
     }
-    
+
     private class OperatorEx : Operator {
         public AppBehind AppBehind { get; set; }
-        
+
         public void DisplayDirectory(FileSystemNode node) {
             Blank();
             TryGetFiles(node.FullPath)?.ToList().ForEach(f => {
@@ -113,14 +112,14 @@ public partial class OFWindow : Window {
             }
         }
     }
-    
+
     private class FileSystemTreeEx : FileSystemTree {
         public AppBehind AppBehind { get; set; }
-        
+
         public OperatorEx GridOperator { private get; set; }
-        
+
         public TextBox FileFullPathInput { private get; set; }
-        
+
         public bool CreateNewFile { private get; set; }
 
         public new void Fill(string path) {

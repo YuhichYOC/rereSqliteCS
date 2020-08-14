@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
-using rereSqlite___Headliner;
 
 public partial class FileBrowse : Page {
     private AppBehind appBehind;

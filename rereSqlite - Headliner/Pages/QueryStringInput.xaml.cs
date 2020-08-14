@@ -29,13 +29,14 @@ public partial class QueryStringInput : Page {
     public void SetQueryString(string arg) {
         queryInput.Text = arg;
     }
-    
+
     private void PerformExecute() {
         var openNew = !(null != qc && qc.TransactionAlreadyBegun);
         if (openNew) {
             qc = new QueryChunk(AppBehind);
             qc.Open();
         }
+
         qc.AddCommand(queryInput.Text);
         qc.Execute();
         if (openNew) qc.Close();

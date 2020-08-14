@@ -16,7 +16,7 @@ public partial class TableList : Page {
             FontSize = appBehind.FontSize;
         }
     }
-    
+
     public TableList() {
         InitializeComponent();
         Prepare();
@@ -33,7 +33,7 @@ public partial class TableList : Page {
         if (@"".Equals(AppBehind.DBFilePath)) return;
         FillTableList(QueryTables());
     }
-    
+
     private List<List<object>> QueryTables() {
         var accessor = new SqliteAccessor
             {DataSource = AppBehind.DBFilePath, Password = AppBehind.Password};
@@ -61,7 +61,7 @@ public partial class TableList : Page {
             addRow.TrySetMember(@"TableName", row[0].ToString());
             tableListOperator.AddRow(addRow);
         });
-        
+
         tableListOperator.Refresh();
     }
 

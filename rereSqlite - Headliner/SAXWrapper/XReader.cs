@@ -26,9 +26,9 @@ public class XReader {
             return directory + @"\" + fileName;
         }
     }
-    
+
     public NodeEntity Node { get; private set; }
-    
+
     public XReader() {
         currentNodeId = 1;
         depth = 1;
@@ -46,7 +46,7 @@ public class XReader {
             ParseComment(reader);
         }
     }
-    
+
     protected void ParseElement(XmlReader reader) {
         if (XmlNodeType.Element != reader.NodeType) return;
 
@@ -56,7 +56,7 @@ public class XReader {
         currentNodeId++;
         Node.FindTail(depth).AddChild(newNode);
         ParseAttributes(reader, newNode);
-        
+
         if (!reader.IsEmptyElement) depth++;
     }
 
@@ -89,7 +89,7 @@ public class XReader {
         });
         currentNodeId++;
     }
-    
+
     private void ParseAttributes(XmlReader reader, NodeEntity currentNode) {
         var iLoopCount = reader.AttributeCount;
         for (var i = 0; iLoopCount > i; ++i) {

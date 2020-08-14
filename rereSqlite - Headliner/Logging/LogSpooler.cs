@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -24,15 +23,15 @@ public class LogSpooler {
         Warn,
         Info
     }
-    
-    public int SafeTicks { 
+
+    public int SafeTicks {
         set => safeTicks = value;
     }
 
     public LogSpooler() {
         var repo = LogManager.GetRepository(Assembly.GetCallingAssembly());
         XmlConfigurator.Configure(repo, new FileInfo(@"./SaveLog.config"));
-        
+
         errorLogLines = new List<string>();
         warnLogLines = new List<string>();
         infoLogLines = new List<string>();
@@ -45,7 +44,7 @@ public class LogSpooler {
         var callback = new TimerCallback(OnUpdate);
         timer = new Timer(callback, null, 1000, 1000);
     }
-    
+
     private void OnUpdate(object arg) {
         FlushAny(LogType.Error);
         FlushAny(LogType.Warn);
@@ -53,16 +52,18 @@ public class LogSpooler {
         ticks++;
         if (0 < safeTicks && ticks >= safeTicks) Dispose();
     }
-    
+
     private void FlushAny(LogType logType) {
         if (LogType.Error == logType && 0 == errorLogLines.Count) return;
         if (LogType.Warn == logType && 0 == warnLogLines.Count) return;
         if (LogType.Info == logType && 0 == infoLogLines.Count) return;
-        
+
         var message = new StringBuilder();
         message.AppendLine();
 
-        List<string> SubList(List<string> logLines, int toIndex) => logLines.GetRange(0, toIndex);
+        List<string> SubList(List<string> logLines, int toIndex) {
+            return logLines.GetRange(0, toIndex);
+        }
 
         StringBuilder AppendedSubList(List<string> appendList, StringBuilder target) {
             appendList.ForEach(row => target.AppendLine(row));
@@ -77,15 +78,18 @@ public class LogSpooler {
 
         switch (logType) {
             case LogType.Error:
-                LogManager.GetLogger(Assembly.GetCallingAssembly(), @"ErrorLog").Error(AppendedSubList(SubList(errorLogLines, lastIndex), message).ToString());
+                LogManager.GetLogger(Assembly.GetCallingAssembly(), @"ErrorLog")
+                    .Error(AppendedSubList(SubList(errorLogLines, lastIndex), message).ToString());
                 errorLogLines.RemoveRange(0, lastIndex + 1);
                 break;
             case LogType.Warn:
-                LogManager.GetLogger(Assembly.GetCallingAssembly(), @"WarnLog").Warn(AppendedSubList(SubList(warnLogLines, lastIndex), message).ToString());
+                LogManager.GetLogger(Assembly.GetCallingAssembly(), @"WarnLog")
+                    .Warn(AppendedSubList(SubList(warnLogLines, lastIndex), message).ToString());
                 warnLogLines.RemoveRange(0, lastIndex + 1);
                 break;
             default:
-                LogManager.GetLogger(Assembly.GetCallingAssembly(), @"InfoLog").Info(AppendedSubList(SubList(infoLogLines, lastIndex), message).ToString());
+                LogManager.GetLogger(Assembly.GetCallingAssembly(), @"InfoLog")
+                    .Info(AppendedSubList(SubList(infoLogLines, lastIndex), message).ToString());
                 infoLogLines.RemoveRange(0, lastIndex + 1);
                 break;
         }
@@ -101,7 +105,7 @@ public class LogSpooler {
             HandleAppendException(LogType.Error, message, ex);
         }
     }
-    
+
     public void AppendError(string message, Exception e) {
         try {
             errorLogLines.Add(message);
@@ -130,7 +134,7 @@ public class LogSpooler {
             HandleAppendException(LogType.Info, message, ex);
         }
     }
-    
+
     private void HandleAppendException(LogType logType, string message, Exception ex) {
         const string loggerName = @"LogOperatorLog";
         var description = @"Exception during " + logType switch {
@@ -140,7 +144,7 @@ public class LogSpooler {
         };
         LogManager.GetLogger(Assembly.GetCallingAssembly(), loggerName).Error(description + message, ex);
     }
-    
+
     public void Dispose() {
         timer.Change(Timeout.Infinite, Timeout.Infinite);
         FlushAny(LogType.Error);

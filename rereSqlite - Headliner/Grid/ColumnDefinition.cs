@@ -3,7 +3,7 @@ using System.Windows.Data;
 
 public class ColumnDefinition {
     private string title;
-    
+
     public string BindName { get; set; }
 
     public string Title {

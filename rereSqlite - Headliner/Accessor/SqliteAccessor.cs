@@ -33,19 +33,19 @@ public class SqliteAccessor : IDisposable {
     private string ConnectionString => string.IsNullOrEmpty(password)
         ? new SqliteConnectionStringBuilder {DataSource = dataSource}.ToString()
         : new SqliteConnectionStringBuilder {DataSource = dataSource, Password = password}.ToString();
-    
+
     private SqliteConnection Connection { get; }
-    
+
     public bool TransactionAlreadyBegun { get; private set; }
 
     public string QueryString {
         set => queryString = value;
     }
-    
+
     public List<Tuple<string, string>> QueryResultAttributes { get; private set; }
-    
+
     public List<List<object>> QueryResult { get; private set; }
-    
+
     public SqliteAccessor() {
         dataSource = @"";
         password = @"";
@@ -86,7 +86,8 @@ public class SqliteAccessor : IDisposable {
     private List<Tuple<string, string>> FetchResultAttributes(IDataRecord record) {
         var ret = new List<Tuple<string, string>>();
         for (var i = 0; record.FieldCount > i; ++i)
-            ret.Add(new Tuple<string, string>(record.GetName(i), TypeNameFromSqliteTypeName(record.GetDataTypeName(i))));
+            ret.Add(new Tuple<string, string>(record.GetName(i),
+                TypeNameFromSqliteTypeName(record.GetDataTypeName(i))));
 
         return ret;
     }
@@ -132,7 +133,7 @@ public class SqliteAccessor : IDisposable {
         using var outputStream = new SqliteBlob(Connection, tableName, columnName, rowId);
         inputStream.CopyTo(outputStream);
     }
-    
+
     public object ExecuteScalar(SqliteCommand command) {
         return command.ExecuteScalar();
     }

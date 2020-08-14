@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,11 +11,11 @@ public partial class TabPager : UserControl {
     private List<Tuple<Button, Page>> pages;
 
     public AppBehind AppBehind { get; set; }
-    
+
     public bool EnableRemovePage { get; set; }
 
     public int PagesCount => pages.Count;
-    
+
     public TabPager() {
         InitializeComponent();
         Prepare();
@@ -42,7 +41,7 @@ public partial class TabPager : UserControl {
     public Page GetPage(string name) {
         return pages.First(page => name.Equals(page.Item1.Content)).Item2;
     }
-    
+
     private void SwitchPage() {
         if (null == currentPage) {
             canvas.Content = null;

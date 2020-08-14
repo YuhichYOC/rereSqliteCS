@@ -7,7 +7,7 @@ using System.Windows.Controls;
 
 public class FileSystemNode : TreeViewItem {
     public string NodeName { get; set; }
-    
+
     public string FullPath { get; set; }
 
     public void Fill() {
@@ -16,7 +16,7 @@ public class FileSystemNode : TreeViewItem {
             Fill(Find(d), d);
         });
     }
-    
+
     private void Fill(FileSystemNode node, string path) {
         TryGetDirectories(path)?.ToList().ForEach(d => node.AddChild(Path.GetFileName(d), d));
     }
@@ -33,11 +33,12 @@ public class FileSystemNode : TreeViewItem {
             if (null != child) AppendTree(child, d);
         });
     }
-    
+
     private void AppendTree(FileSystemNode node, string path) {
-        TryGetDirectories(path)?.Where(d => !node.ChildExists(d)).ToList().ForEach(d => node.AddChild(Path.GetFileName(d), d));
+        TryGetDirectories(path)?.Where(d => !node.ChildExists(d)).ToList()
+            .ForEach(d => node.AddChild(Path.GetFileName(d), d));
     }
-    
+
     private IEnumerable<string> TryGetDirectories(string path) {
         try {
             return Directory.EnumerateDirectories(path);
@@ -50,11 +51,11 @@ public class FileSystemNode : TreeViewItem {
     public bool ChildExists(string otherPath) {
         return Items.Cast<FileSystemNode>().Any(child => child.Equals(otherPath));
     }
-    
+
     public bool Equals(string otherPath) {
         return FullPath.Equals(otherPath);
     }
-    
+
     private FileSystemNode Find(string otherPath) {
         return Items.Cast<FileSystemNode>().FirstOrDefault(child => child.Equals(otherPath));
     }

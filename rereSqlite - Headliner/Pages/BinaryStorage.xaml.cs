@@ -53,7 +53,7 @@ public partial class BinaryStorage : Page {
         accessor.Close();
         FillCardList(accessor.QueryResult);
     }
-    
+
     private void FillCardList(List<List<object>> rows) {
         cardList.Children.Clear();
         var keyHit = false;

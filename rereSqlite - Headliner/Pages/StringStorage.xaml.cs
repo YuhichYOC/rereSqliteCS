@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -14,7 +13,7 @@ public partial class StringStorage : Page {
             FontSize = appBehind.FontSize;
         }
     }
-    
+
     public StringStorage() {
         InitializeComponent();
         Prepare();

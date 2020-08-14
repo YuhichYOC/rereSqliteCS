@@ -2,7 +2,7 @@
 
 public class XMLTree {
     private XMLNode root;
-    
+
     public TreeView OwnTree { get; private set; }
 
     public void Prepare(TreeView arg) {

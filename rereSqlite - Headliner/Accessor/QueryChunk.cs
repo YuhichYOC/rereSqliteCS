@@ -7,7 +7,7 @@ public class QueryChunk {
     private readonly AppBehind appBehind;
 
     private SqliteTransaction transaction;
-    
+
     private List<SqliteCommand> commands;
 
     public bool TransactionAlreadyBegun => accessor.TransactionAlreadyBegun;
@@ -59,7 +59,7 @@ public class QueryChunk {
         transaction.Rollback();
         Close();
     }
-    
+
     public void Close() {
         accessor.Close();
     }
