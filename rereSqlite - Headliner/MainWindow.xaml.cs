@@ -21,6 +21,7 @@
 
 using System;
 using System.Windows;
+using System.Windows.Media;
 
 /// <summary>
 ///     Interaction logic for MainWindow.xaml
@@ -36,6 +37,11 @@ public partial class MainWindow : Window {
     }
 
     private void Prepare() {
+        Height = AppBehind.WindowHeight;
+        Width = AppBehind.WindowWidth;
+        FontFamily = new FontFamily(AppBehind.FontFamily);
+        FontSize = AppBehind.FontSize;
+        pages.AppBehind = AppBehind;
         pages.EnableRemovePage = false;
         pages.AddPage(@"ファイルを開く", new FileBrowse {AppBehind = AppBehind});
         pages.AddPage(@"テーブル一覧", new TableList {AppBehind = AppBehind});

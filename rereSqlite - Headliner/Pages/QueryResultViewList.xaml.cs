@@ -20,15 +20,17 @@
 */
 
 using System.Windows.Controls;
+using System.Windows.Media;
 
 public partial class QueryResultViewList : Page {
     private AppBehind appBehind;
 
     public AppBehind AppBehind {
-        get => appBehind;
         set {
             appBehind = value;
+            FontFamily = new FontFamily(appBehind.FontFamily);
             FontSize = appBehind.FontSize;
+            pager.AppBehind = appBehind;
         }
     }
 
@@ -42,7 +44,7 @@ public partial class QueryResultViewList : Page {
     }
 
     public void AddPage(SqliteAccessor accessor) {
-        var addPage = new QueryResultView {AppBehind = AppBehind};
+        var addPage = new QueryResultView {AppBehind = appBehind};
         addPage.Show(accessor);
         pager.AddPage(@"Query " + (pager.PagesCount + 1), addPage);
     }

@@ -23,14 +23,15 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 public partial class BinaryStorage : Page {
     private AppBehind appBehind;
 
     public AppBehind AppBehind {
-        get => appBehind;
         set {
             appBehind = value;
+            FontFamily = new FontFamily(appBehind.FontFamily);
             FontSize = appBehind.FontSize;
         }
     }
@@ -41,12 +42,12 @@ public partial class BinaryStorage : Page {
     }
 
     private void Prepare() {
-        DataContext = AppBehind;
+        DataContext = appBehind;
     }
 
     public void SetUp() {
         var accessor = new SqliteAccessor {
-            DataSource = AppBehind.DBFilePath, Password = AppBehind.Password,
+            DataSource = appBehind.DBFilePath, Password = appBehind.Password,
             QueryString =
                 @" SELECT COUNT(NAME) AS COUNT_TABLES FROM sqlite_master WHERE TYPE = 'table' AND NAME = 'BINARY_STORAGE' "
         };
@@ -64,7 +65,7 @@ public partial class BinaryStorage : Page {
 
     private void PerformSelect() {
         var accessor = new SqliteAccessor {
-            DataSource = AppBehind.DBFilePath, Password = AppBehind.Password,
+            DataSource = appBehind.DBFilePath, Password = appBehind.Password,
             QueryString = @" SELECT KEY, FILE_NAME FROM BINARY_STORAGE WHERE KEY LIKE @key || '%' "
         };
         accessor.Open();
@@ -80,14 +81,14 @@ public partial class BinaryStorage : Page {
         var keyHit = false;
         rows.ForEach(row => {
             cardList.Children.Add(new BinaryCard {
-                AppBehind = AppBehind, Key = row[0].ToString(), FileName = row[1].ToString(), HasBinaryInDb = true,
+                AppBehind = appBehind, Key = row[0].ToString(), FileName = row[1].ToString(), HasBinaryInDb = true,
                 HasBeenAnyOperation = false, Margin = new Thickness(0, 2, 0, 0)
             });
             if (keyInput.Text.Equals(row[0].ToString())) keyHit = true;
         });
         if (keyHit) return;
         cardList.Children.Add(new BinaryCard {
-            AppBehind = AppBehind, Key = keyInput.Text, FileName = @"", HasBinaryInDb = false,
+            AppBehind = appBehind, Key = keyInput.Text, FileName = @"", HasBinaryInDb = false,
             HasBeenAnyOperation = false, Margin = new Thickness(0, 2, 0, 0)
         });
     }
@@ -97,7 +98,7 @@ public partial class BinaryStorage : Page {
             PerformSelect();
         }
         catch (Exception ex) {
-            AppBehind.AppendError(ex.Message, ex);
+            appBehind.AppendError(ex.Message, ex);
         }
     }
 }

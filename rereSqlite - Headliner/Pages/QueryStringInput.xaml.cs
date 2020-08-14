@@ -22,6 +22,7 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 public partial class QueryStringInput : Page {
     private AppBehind appBehind;
@@ -29,9 +30,9 @@ public partial class QueryStringInput : Page {
     private QueryChunk qc;
 
     public AppBehind AppBehind {
-        get => appBehind;
         set {
             appBehind = value;
+            FontFamily = new FontFamily(appBehind.FontFamily);
             FontSize = appBehind.FontSize;
         }
     }
@@ -55,7 +56,7 @@ public partial class QueryStringInput : Page {
     private void PerformExecute() {
         var openNew = !(null != qc && qc.TransactionAlreadyBegun);
         if (openNew) {
-            qc = new QueryChunk(AppBehind);
+            qc = new QueryChunk(appBehind);
             qc.Open();
         }
 
@@ -66,7 +67,7 @@ public partial class QueryStringInput : Page {
 
     private void PerformBegin() {
         qc?.Close();
-        qc = new QueryChunk(AppBehind);
+        qc = new QueryChunk(appBehind);
         qc.Begin();
         beginButton.IsEnabled = false;
         commitButton.IsEnabled = true;
@@ -94,7 +95,7 @@ public partial class QueryStringInput : Page {
             PerformExecute();
         }
         catch (Exception ex) {
-            AppBehind.AppendError(ex.Message, ex);
+            appBehind.AppendError(ex.Message, ex);
         }
     }
 
@@ -103,7 +104,7 @@ public partial class QueryStringInput : Page {
             PerformBegin();
         }
         catch (Exception ex) {
-            AppBehind.AppendError(ex.Message, ex);
+            appBehind.AppendError(ex.Message, ex);
         }
     }
 
@@ -112,7 +113,7 @@ public partial class QueryStringInput : Page {
             PerformCommit();
         }
         catch (Exception ex) {
-            AppBehind.AppendError(ex.Message, ex);
+            appBehind.AppendError(ex.Message, ex);
         }
     }
 
@@ -121,7 +122,7 @@ public partial class QueryStringInput : Page {
             PerformRollback();
         }
         catch (Exception ex) {
-            AppBehind.AppendError(ex.Message, ex);
+            appBehind.AppendError(ex.Message, ex);
         }
     }
 }

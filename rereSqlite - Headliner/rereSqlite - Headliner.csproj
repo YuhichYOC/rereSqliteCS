@@ -96,6 +96,10 @@
       <Content Include="SaveLog.config">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
+      <None Remove="Setting.config" />
+      <Content Include="Setting.config">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>

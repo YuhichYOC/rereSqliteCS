@@ -22,6 +22,7 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 public partial class StringCard : UserControl {
     private AppBehind appBehind;
@@ -29,9 +30,9 @@ public partial class StringCard : UserControl {
     private string originalValue;
 
     public AppBehind AppBehind {
-        get => appBehind;
         set {
             appBehind = value;
+            FontFamily = new FontFamily(appBehind.FontFamily);
             FontSize = appBehind.FontSize;
         }
     }
@@ -62,7 +63,7 @@ public partial class StringCard : UserControl {
 
     private void PerformInsert() {
         var accessor = new SqliteAccessor {
-            DataSource = AppBehind.DBFilePath, Password = AppBehind.Password,
+            DataSource = appBehind.DBFilePath, Password = appBehind.Password,
             QueryString = @" INSERT INTO STRING_STORAGE ( KEY, VALUE ) VALUES ( @key, @value ) "
         };
         accessor.Open();
@@ -76,7 +77,7 @@ public partial class StringCard : UserControl {
 
     private void PerformUpdate() {
         var accessor = new SqliteAccessor {
-            DataSource = AppBehind.DBFilePath, Password = AppBehind.Password,
+            DataSource = appBehind.DBFilePath, Password = appBehind.Password,
             QueryString = @" UPDATE STRING_STORAGE SET VALUE = @value WHERE KEY = @key "
         };
         accessor.Open();
@@ -99,7 +100,7 @@ public partial class StringCard : UserControl {
             PerformInsert();
         }
         catch (Exception ex) {
-            AppBehind.AppendError(ex.Message, ex);
+            appBehind.AppendError(ex.Message, ex);
         }
     }
 
@@ -108,7 +109,7 @@ public partial class StringCard : UserControl {
             PerformUpdate();
         }
         catch (Exception ex) {
-            AppBehind.AppendError(ex.Message, ex);
+            appBehind.AppendError(ex.Message, ex);
         }
     }
 }

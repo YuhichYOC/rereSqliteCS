@@ -23,6 +23,7 @@ using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 public partial class BinaryCard : UserControl {
     private AppBehind appBehind;
@@ -34,9 +35,9 @@ public partial class BinaryCard : UserControl {
     private bool hasBinaryInDB;
 
     public AppBehind AppBehind {
-        get => appBehind;
         set {
             appBehind = value;
+            FontFamily = new FontFamily(appBehind.FontFamily);
             FontSize = appBehind.FontSize;
         }
     }
@@ -77,7 +78,7 @@ public partial class BinaryCard : UserControl {
     }
 
     private void PerformSelectFile() {
-        var of = new OFWindow();
+        var of = new OFWindow {AppBehind = appBehind};
         of.ShowDialog();
         if (null == of.SelectedPath || @"".Equals(of.SelectedPath)) return;
         fileFullPath = of.SelectedPath;
@@ -87,12 +88,12 @@ public partial class BinaryCard : UserControl {
     }
 
     private void PerformRetrieveFile() {
-        var of = new OFWindow();
+        var of = new OFWindow {AppBehind = appBehind};
         of.CreateNewFile();
         of.ShowDialog();
         if (null == of.SelectedPath || @"".Equals(of.SelectedPath)) return;
         var accessor = new SqliteAccessor {
-            DataSource = AppBehind.DBFilePath, Password = AppBehind.Password,
+            DataSource = appBehind.DBFilePath, Password = appBehind.Password,
             QueryString = @" SELECT VALUE FROM BINARY_STORAGE WHERE KEY = @key "
         };
         accessor.Open();
@@ -106,7 +107,7 @@ public partial class BinaryCard : UserControl {
     private void PerformInsertFile() {
         var totalLength = new FileInfo(fileFullPath).Length;
         var accessor = new SqliteAccessor {
-            DataSource = AppBehind.DBFilePath, Password = AppBehind.Password,
+            DataSource = appBehind.DBFilePath, Password = appBehind.Password,
             QueryString =
                 @" INSERT INTO BINARY_STORAGE ( KEY, FILE_NAME, VALUE ) VALUES ( @key, @fileName, zeroblob(@length) ); SELECT rowid FROM BINARY_STORAGE WHERE KEY = @key; "
         };
@@ -125,7 +126,7 @@ public partial class BinaryCard : UserControl {
     private void PerformUpdateFile() {
         var totalLength = new FileInfo(fileFullPath).Length;
         var accessor = new SqliteAccessor {
-            DataSource = AppBehind.DBFilePath, Password = AppBehind.Password,
+            DataSource = appBehind.DBFilePath, Password = appBehind.Password,
             QueryString =
                 @" DELETE FROM BINARY_STORAGE WHERE KEY = @key; INSERT INTO BINARY_STORAGE ( KEY, FILE_NAME, VALUE ) VALUES ( @key, @fileName, zeroblob(@length) ); SELECT rowid FROM BINARY_STORAGE WHERE KEY = @key; "
         };
@@ -145,7 +146,7 @@ public partial class BinaryCard : UserControl {
             PerformSelectFile();
         }
         catch (Exception ex) {
-            AppBehind.AppendError(ex.Message, ex);
+            appBehind.AppendError(ex.Message, ex);
         }
     }
 
@@ -154,7 +155,7 @@ public partial class BinaryCard : UserControl {
             PerformRetrieveFile();
         }
         catch (Exception ex) {
-            AppBehind.AppendError(ex.Message, ex);
+            appBehind.AppendError(ex.Message, ex);
         }
     }
 
@@ -163,7 +164,7 @@ public partial class BinaryCard : UserControl {
             PerformInsertFile();
         }
         catch (Exception ex) {
-            AppBehind.AppendError(ex.Message, ex);
+            appBehind.AppendError(ex.Message, ex);
         }
     }
 
@@ -172,7 +173,7 @@ public partial class BinaryCard : UserControl {
             PerformUpdateFile();
         }
         catch (Exception ex) {
-            AppBehind.AppendError(ex.Message, ex);
+            appBehind.AppendError(ex.Message, ex);
         }
     }
 }

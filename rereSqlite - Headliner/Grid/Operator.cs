@@ -25,7 +25,9 @@ using System.Windows.Controls;
 
 public class Operator {
     private DataGrid ownGrid;
+
     private List<ColumnDefinition> columns;
+
     private ObservableCollection<RowEntity> rows;
 
     public void Prepare(DataGrid grid) {

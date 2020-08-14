@@ -24,14 +24,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Navigation;
 
 public partial class TabPager : UserControl {
+    private AppBehind appBehind;
+
     private Tuple<Button, Page> currentPage;
 
     private List<Tuple<Button, Page>> pages;
 
-    public AppBehind AppBehind { get; set; }
+    public AppBehind AppBehind {
+        set {
+            appBehind = value;
+            FontFamily = new FontFamily(appBehind.FontFamily);
+            FontSize = appBehind.FontSize;
+        }
+    }
 
     public bool EnableRemovePage { get; set; }
 
@@ -93,7 +102,7 @@ public partial class TabPager : UserControl {
             RemovePage();
         }
         catch (Exception ex) {
-            AppBehind.AppendError(ex.Message, ex);
+            appBehind.AppendError(ex.Message, ex);
         }
     }
 }

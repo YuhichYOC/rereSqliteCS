@@ -20,6 +20,7 @@
 */
 
 using System.Windows.Controls;
+using System.Windows.Media;
 
 public partial class QueryResultView : Page {
     private AppBehind appBehind;
@@ -27,9 +28,9 @@ public partial class QueryResultView : Page {
     private Operator dataGridOperator;
 
     public AppBehind AppBehind {
-        get => appBehind;
         set {
             appBehind = value;
+            FontFamily = new FontFamily(appBehind.FontFamily);
             FontSize = appBehind.FontSize;
         }
     }

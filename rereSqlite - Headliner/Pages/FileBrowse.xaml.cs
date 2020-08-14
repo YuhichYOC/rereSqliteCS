@@ -22,14 +22,15 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 public partial class FileBrowse : Page {
     private AppBehind appBehind;
 
     public AppBehind AppBehind {
-        private get => appBehind;
         set {
             appBehind = value;
+            FontFamily = new FontFamily(appBehind.FontFamily);
             FontSize = appBehind.FontSize;
         }
     }
@@ -40,46 +41,46 @@ public partial class FileBrowse : Page {
     }
 
     private void Prepare() {
-        DataContext = AppBehind;
+        DataContext = appBehind;
     }
 
     private void Browse_Click(object sender, RoutedEventArgs e) {
         try {
-            var of = new OFWindow();
+            var of = new OFWindow {AppBehind = appBehind};
             of.ShowDialog();
             if (null == of.SelectedPath || @"".Equals(of.SelectedPath)) return;
-            AppBehind.DBFilePath = of.SelectedPath;
-            filePathOutput.Content = AppBehind.DBFilePath;
-            AppBehind.Password = passwordInput.Text;
-            AppBehind.Reload();
-            AppBehind.StringStorageSetUp();
-            AppBehind.BinaryStorageSetUp();
+            appBehind.DBFilePath = of.SelectedPath;
+            filePathOutput.Content = appBehind.DBFilePath;
+            appBehind.Password = passwordInput.Text;
+            appBehind.Reload();
+            appBehind.StringStorageSetUp();
+            appBehind.BinaryStorageSetUp();
         }
         catch (Exception ex) {
-            AppBehind.AppendError(ex.Message, ex);
+            appBehind.AppendError(ex.Message, ex);
         }
     }
 
     private void NewFile_Click(object sender, RoutedEventArgs e) {
         try {
-            var of = new OFWindow();
+            var of = new OFWindow {AppBehind = appBehind};
             of.CreateNewFile();
             of.ShowDialog();
             if (null == of.SelectedPath || @"".Equals(of.SelectedPath)) return;
-            AppBehind.DBFilePath = of.SelectedPath;
-            filePathOutput.Content = AppBehind.DBFilePath;
-            AppBehind.Password = passwordInput.Text;
-            var accessor = @"".Equals(AppBehind.Password)
-                ? new SqliteAccessor {DataSource = AppBehind.DBFilePath}
-                : new SqliteAccessor {DataSource = AppBehind.DBFilePath, Password = AppBehind.Password};
+            appBehind.DBFilePath = of.SelectedPath;
+            filePathOutput.Content = appBehind.DBFilePath;
+            appBehind.Password = passwordInput.Text;
+            var accessor = @"".Equals(appBehind.Password)
+                ? new SqliteAccessor {DataSource = appBehind.DBFilePath}
+                : new SqliteAccessor {DataSource = appBehind.DBFilePath, Password = appBehind.Password};
             accessor.Open();
             accessor.Close();
-            AppBehind.Reload();
-            AppBehind.StringStorageSetUp();
-            AppBehind.BinaryStorageSetUp();
+            appBehind.Reload();
+            appBehind.StringStorageSetUp();
+            appBehind.BinaryStorageSetUp();
         }
         catch (Exception ex) {
-            AppBehind.AppendError(ex.Message, ex);
+            appBehind.AppendError(ex.Message, ex);
         }
     }
 }

@@ -21,14 +21,15 @@
 
 using System;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 public partial class RunningInformations : Page {
     private AppBehind appBehind;
 
     public AppBehind AppBehind {
-        get => appBehind;
         set {
             appBehind = value;
+            FontFamily = new FontFamily(appBehind.FontFamily);
             FontSize = appBehind.FontSize;
         }
     }

@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 public partial class TableList : Page {
     private AppBehind appBehind;
@@ -31,9 +32,9 @@ public partial class TableList : Page {
     private Operator tableListOperator;
 
     public AppBehind AppBehind {
-        private get => appBehind;
         set {
             appBehind = value;
+            FontFamily = new FontFamily(appBehind.FontFamily);
             FontSize = appBehind.FontSize;
         }
     }
@@ -51,13 +52,13 @@ public partial class TableList : Page {
     }
 
     public void FillTableList() {
-        if (@"".Equals(AppBehind.DBFilePath)) return;
+        if (@"".Equals(appBehind.DBFilePath)) return;
         FillTableList(QueryTables());
     }
 
     private List<List<object>> QueryTables() {
         var accessor = new SqliteAccessor
-            {DataSource = AppBehind.DBFilePath, Password = AppBehind.Password};
+            {DataSource = appBehind.DBFilePath, Password = appBehind.Password};
         accessor.Open();
         if (@"".Equals(filterInput.Text.Trim())) {
             accessor.QueryString = @" SELECT NAME FROM sqlite_master WHERE TYPE = 'table' ORDER BY NAME ";
@@ -89,7 +90,7 @@ public partial class TableList : Page {
     private void PerformQueryWholeTable(string tableName) {
         if (@"".Equals(tableName)) return;
         var accessor = new SqliteAccessor {
-            DataSource = AppBehind.DBFilePath, Password = AppBehind.Password,
+            DataSource = appBehind.DBFilePath, Password = appBehind.Password,
             QueryString = @" PRAGMA table_info('" + tableName + "') "
         };
         accessor.Open();
@@ -106,8 +107,8 @@ public partial class TableList : Page {
         accessor.QueryString = query;
         accessor.Execute(accessor.CreateCommand());
         accessor.Close();
-        AppBehind.SetQueryString(query);
-        AppBehind.AddPage(accessor);
+        appBehind.SetQueryString(query);
+        appBehind.AddPage(accessor);
     }
 
     private void Reload_AnyEvent(object sender, RoutedEventArgs e) {
@@ -115,7 +116,7 @@ public partial class TableList : Page {
             FillTableList();
         }
         catch (Exception ex) {
-            AppBehind.AppendError(ex.Message, ex);
+            appBehind.AppendError(ex.Message, ex);
         }
     }
 
@@ -124,7 +125,7 @@ public partial class TableList : Page {
             PerformQueryWholeTable((e.OriginalSource as TextBlock)?.Text);
         }
         catch (Exception ex) {
-            AppBehind.AppendError(ex.Message, ex);
+            appBehind.AppendError(ex.Message, ex);
         }
     }
 }

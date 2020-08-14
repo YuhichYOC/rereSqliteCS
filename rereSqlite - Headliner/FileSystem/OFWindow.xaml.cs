@@ -25,13 +25,22 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 public partial class OFWindow : Window {
+    private AppBehind appBehind;
+
     private FileSystemTreeEx driveTreeOperator;
 
     private bool createNewFile;
 
-    public AppBehind AppBehind { get; set; }
+    public AppBehind AppBehind {
+        set {
+            appBehind = value;
+            FontFamily = new FontFamily(appBehind.FontFamily);
+            FontSize = appBehind.FontSize;
+        }
+    }
 
     public string SelectedPath { get; private set; }
 
@@ -53,7 +62,7 @@ public partial class OFWindow : Window {
     }
 
     private OperatorEx PrepareFileList() {
-        var fileListOperator = new OperatorEx {AppBehind = AppBehind};
+        var fileListOperator = new OperatorEx {AppBehind = appBehind};
         fileListOperator.Prepare(fileList);
         fileListOperator.AddColumn(@"FileName", @"ファイル名");
         fileListOperator.CreateColumns();
@@ -62,7 +71,7 @@ public partial class OFWindow : Window {
     }
 
     private void PrepareDriveTree(OperatorEx gridOperator) {
-        driveTreeOperator = new FileSystemTreeEx {AppBehind = AppBehind};
+        driveTreeOperator = new FileSystemTreeEx {AppBehind = appBehind};
         driveTreeOperator.Prepare(driveTree);
         driveTreeOperator.GridOperator = gridOperator;
         driveTreeOperator.FileFullPathInput = fileFullPathInput;
@@ -83,7 +92,7 @@ public partial class OFWindow : Window {
             SwitchDrive();
         }
         catch (Exception ex) {
-            AppBehind.AppendError(ex.Message, ex);
+            appBehind.AppendError(ex.Message, ex);
         }
     }
 
@@ -94,7 +103,7 @@ public partial class OFWindow : Window {
                 fileFullPathInput.Text = selectedFile as string ?? @"";
         }
         catch (Exception ex) {
-            AppBehind.AppendError(ex.Message, ex);
+            appBehind.AppendError(ex.Message, ex);
         }
     }
 
@@ -106,12 +115,16 @@ public partial class OFWindow : Window {
             Close();
         }
         catch (Exception ex) {
-            AppBehind.AppendError(ex.Message, ex);
+            appBehind.AppendError(ex.Message, ex);
         }
     }
 
     private class OperatorEx : Operator {
-        public AppBehind AppBehind { get; set; }
+        private AppBehind appBehind;
+
+        public AppBehind AppBehind {
+            set => appBehind = value;
+        }
 
         public void DisplayDirectory(FileSystemNode node) {
             Blank();
@@ -133,7 +146,11 @@ public partial class OFWindow : Window {
     }
 
     private class FileSystemTreeEx : FileSystemTree {
-        public AppBehind AppBehind { get; set; }
+        private AppBehind appBehind;
+
+        public AppBehind AppBehind {
+            set => appBehind = value;
+        }
 
         public OperatorEx GridOperator { private get; set; }
 
@@ -154,7 +171,7 @@ public partial class OFWindow : Window {
                 if (CreateNewFile) FileFullPathInput.Text = item.FullPath;
             }
             catch (Exception ex) {
-                AppBehind.AppendError(ex.Message, ex);
+                appBehind.AppendError(ex.Message, ex);
             }
         }
     }

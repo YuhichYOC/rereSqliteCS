@@ -34,6 +34,12 @@ public class AppBehind {
 
     public delegate void BinaryStorageSetUpDelegate();
 
+    public int WindowHeight { get; }
+
+    public int WindowWidth { get; }
+
+    public string FontFamily { get; }
+
     public double FontSize { get; }
 
     public string DBFilePath { get; set; }
@@ -53,6 +59,11 @@ public class AppBehind {
     public BinaryStorageSetUpDelegate BinaryStorageSetUp { get; set; }
 
     public AppBehind() {
-        FontSize = 14;
+        var r = new XReader {Directory = @".", FileName = @"Setting.config"};
+        r.Parse();
+        WindowHeight = int.Parse(r.Node.Find(@"SettingDef").Find(@"Window").Find(@"Height").NodeValue);
+        WindowWidth = int.Parse(r.Node.Find(@"SettingDef").Find(@"Window").Find(@"Width").NodeValue);
+        FontFamily = r.Node.Find(@"SettingDef").Find(@"Window").Find(@"FontFamily").NodeValue;
+        FontSize = double.Parse(r.Node.Find(@"SettingDef").Find(@"Window").Find(@"FontSize").NodeValue);
     }
 }
