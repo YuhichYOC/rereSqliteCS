@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
@@ -29,12 +30,19 @@ public partial class TabPager : UserControl {
 
     public void AddPage(string name, Page page) {
         var addButton = new Button {Content = name, Tag = page, Margin = new Thickness(0, 0, 2, 0)};
-        addButton.Click += (senderObj, e) => { };
+        addButton.Click += (senderObj, e) => {
+            currentPage = pages.First(page => page.Item2 == ((Button) senderObj).Tag);
+            SwitchPage();
+        };
         tabs.Children.Add(addButton);
         currentPage = new Tuple<Button, Page>(addButton, page);
         pages.Add(currentPage);
     }
 
+    public Page GetPage(string name) {
+        return pages.First(page => name.Equals(page.Item1.Content)).Item2;
+    }
+    
     private void SwitchPage() {
         if (null == currentPage) {
             canvas.Content = null;
