@@ -1,0 +1,17 @@
+﻿<Page
+    x:Class="RunningInformations"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    mc:Ignorable="d"
+    Title="RunningInformations">
+    <Grid>
+        <TextBox
+            Margin="2, 2, 2, 2"
+            TextWrapping="Wrap"
+            AcceptsReturn="True"
+            VerticalScrollBarVisibility="Visible"
+            x:Name="informations" />
+    </Grid>
+</Page>

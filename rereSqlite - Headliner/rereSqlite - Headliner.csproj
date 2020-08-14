@@ -47,6 +47,9 @@
       <Page Update="Pages\BinaryCard.xaml">
         <Generator></Generator>
       </Page>
+      <Page Update="Pages\RunningInformations.xaml">
+        <Generator></Generator>
+      </Page>
     </ItemGroup>
 
     <ItemGroup>
@@ -83,6 +86,16 @@
       <Compile Update="Pages\BinaryCard.xaml.cs">
         <DependentUpon>BinaryCard.xaml</DependentUpon>
       </Compile>
+      <Compile Update="Pages\RunningInformations.xaml.cs">
+        <DependentUpon>RunningInformations.xaml</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="SaveLog.config" />
+      <Content Include="SaveLog.config">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>

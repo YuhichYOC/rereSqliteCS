@@ -1,8 +1,8 @@
 ﻿/*
 *
-* XMLNode.cs
+* RunningInformations.cs
 *
-* Copyright 2017 Yuichi Yoshii
+* Copyright 2020 Yuichi Yoshii
 *     吉井雄一 @ 吉井産業  you.65535.kir@gmail.com
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,21 +19,29 @@
 *
 */
 
+using System;
 using System.Windows.Controls;
 
-public class XMLNode : TreeViewItem {
-    public NodeEntity Node { get; set; }
+public partial class RunningInformations : Page {
+    private AppBehind appBehind;
 
-    public void Fill() {
-        Header = Node.NodeName;
-        Name = Node.NodeName;
-        Tag = Node.CloneWithoutChildren();
-        Node.Children.ForEach(c => Fill(this, c));
+    public AppBehind AppBehind {
+        get => appBehind;
+        set {
+            appBehind = value;
+            FontSize = appBehind.FontSize;
+        }
     }
 
-    private void Fill(XMLNode arg1, NodeEntity arg2) {
-        var add = new XMLNode {Header = arg2.NodeName, Name = arg2.NodeName, Tag = arg2.CloneWithoutChildren()};
-        arg2.Children.ForEach(c => Fill(add, c));
-        arg1.Items.Add(add);
+    public RunningInformations() {
+        InitializeComponent();
+    }
+
+    public void AppendInfo(string info, Exception ex) {
+        Append(null == ex ? info : info + '\n' + ex.Message + '\n' + ex.StackTrace);
+    }
+
+    private void Append(string info) {
+        informations.Text += '\n' + DateTime.Now.ToString() + '\n' + info + '\n';
     }
 }
