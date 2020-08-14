@@ -43,6 +43,6 @@ public partial class RunningInformations : Page {
     }
 
     private void Append(string info) {
-        informations.Text += '\n' + DateTime.Now.ToString() + '\n' + info + '\n';
+        informations.Text = '\n' + DateTime.Now.ToString() + '\n' + info + '\n' + informations.Text;
     }
 }
