@@ -139,7 +139,7 @@ public class SqliteAccessor : IDisposable {
     }
 
     public bool IsBlobColumn(List<Tuple<string, string>> attributes, int column) {
-        return Type_SqliteBlob.Equals(attributes[column].Item2.ToLower());
+        return DotNet_Blob.Equals(attributes[column].Item2);
     }
 
     public void RetrieveBlob(SqliteCommand command, FileStream outputStream, int blobColumn) {
