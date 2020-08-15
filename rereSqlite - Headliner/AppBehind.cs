@@ -42,6 +42,8 @@ public class AppBehind {
 
     public double FontSize { get; }
 
+    public double DataGridRowHeightPlus { get; }
+
     public string DBFilePath { get; set; }
 
     public string Password { get; set; }
@@ -65,5 +67,7 @@ public class AppBehind {
         WindowWidth = int.Parse(r.Node.Find(@"SettingDef").Find(@"Window").Find(@"Width").NodeValue);
         FontFamily = r.Node.Find(@"SettingDef").Find(@"Window").Find(@"FontFamily").NodeValue;
         FontSize = double.Parse(r.Node.Find(@"SettingDef").Find(@"Window").Find(@"FontSize").NodeValue);
+        DataGridRowHeightPlus =
+            double.Parse(r.Node.Find(@"SettingDef").Find(@"DataGrid").Find(@"RowHeightPlus").NodeValue);
     }
 }

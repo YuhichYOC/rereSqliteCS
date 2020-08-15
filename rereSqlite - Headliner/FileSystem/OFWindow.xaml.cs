@@ -39,8 +39,11 @@ public partial class OFWindow : Window {
             appBehind = value;
             FontFamily = new FontFamily(appBehind.FontFamily);
             FontSize = appBehind.FontSize;
+            RowHeight = appBehind.FontSize + appBehind.DataGridRowHeightPlus;
         }
     }
+
+    public double RowHeight { get; set; }
 
     public string SelectedPath { get; private set; }
 
@@ -54,6 +57,7 @@ public partial class OFWindow : Window {
         FillDriveLetters();
         PrepareDriveTree(PrepareFileList());
         openButton.Click += OpenButton_Click;
+        DataContext = this;
     }
 
     private void FillDriveLetters() {

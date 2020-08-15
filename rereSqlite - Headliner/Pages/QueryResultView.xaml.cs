@@ -32,8 +32,11 @@ public partial class QueryResultView : Page {
             appBehind = value;
             FontFamily = new FontFamily(appBehind.FontFamily);
             FontSize = appBehind.FontSize;
+            RowHeight = appBehind.FontSize + appBehind.DataGridRowHeightPlus;
         }
     }
+
+    public double RowHeight { get; set; }
 
     public QueryResultView() {
         InitializeComponent();
@@ -43,6 +46,7 @@ public partial class QueryResultView : Page {
     private void Prepare() {
         dataGridOperator = new Operator();
         dataGridOperator.Prepare(ownGrid);
+        DataContext = this;
     }
 
     public void Show(SqliteAccessor accessor) {

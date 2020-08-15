@@ -7,6 +7,15 @@
     mc:Ignorable="d"
     Title="QueryResultView">
     <Grid>
-        <DataGrid x:Name="ownGrid" />
+        <DataGrid
+            RowHeight="{Binding RowHeight}"
+            x:Name="ownGrid">
+            <DataGrid.CellStyle>
+                <Style TargetType="DataGridCell">
+                    <Setter Property="VerticalAlignment" Value="Stretch" />
+                    <Setter Property="VerticalContentAlignment" Value="Center" />
+                </Style>
+            </DataGrid.CellStyle>
+        </DataGrid>
     </Grid>
 </Page>

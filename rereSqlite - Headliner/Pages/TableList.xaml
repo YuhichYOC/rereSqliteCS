@@ -33,7 +33,15 @@
         <DataGrid
             Grid.Row="1"
             Margin="0, 2, 0, 0"
+            RowHeight="{Binding RowHeight}"
             x:Name="tableList"
-            MouseDoubleClick="TableList_DoubleClick" />
+            MouseDoubleClick="TableList_DoubleClick">
+            <DataGrid.CellStyle>
+                <Style TargetType="DataGridCell">
+                    <Setter Property="VerticalAlignment" Value="Stretch" />
+                    <Setter Property="VerticalContentAlignment" Value="Center" />
+                </Style>
+            </DataGrid.CellStyle>
+        </DataGrid>
     </Grid>
 </Page>

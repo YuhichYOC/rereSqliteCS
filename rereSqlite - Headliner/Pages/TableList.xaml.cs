@@ -36,8 +36,11 @@ public partial class TableList : Page {
             appBehind = value;
             FontFamily = new FontFamily(appBehind.FontFamily);
             FontSize = appBehind.FontSize;
+            RowHeight = appBehind.FontSize + appBehind.DataGridRowHeightPlus;
         }
     }
+
+    public double RowHeight { get; set; }
 
     public TableList() {
         InitializeComponent();
@@ -49,6 +52,7 @@ public partial class TableList : Page {
         tableListOperator.Prepare(tableList);
         tableListOperator.AddColumn(@"TableName", @"テーブル");
         tableListOperator.CreateColumns();
+        DataContext = this;
     }
 
     public void FillTableList() {

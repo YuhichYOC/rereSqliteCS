@@ -50,7 +50,15 @@
                 <DataGrid
                     Grid.Column="1"
                     Margin="2"
-                    x:Name="fileList" />
+                    RowHeight="{Binding RowHeight}"
+                    x:Name="fileList">
+                    <DataGrid.CellStyle>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="VerticalAlignment" Value="Stretch" />
+                            <Setter Property="VerticalContentAlignment" Value="Center" />
+                        </Style>
+                    </DataGrid.CellStyle>
+                </DataGrid>
             </Grid>
             <GridSplitter
                 Grid.Row="0"
