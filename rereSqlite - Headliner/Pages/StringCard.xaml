@@ -9,7 +9,7 @@
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="30" />
-                <RowDefinition Height="30" />
+                <RowDefinition MinHeight="30" />
                 <RowDefinition Height="30" />
             </Grid.RowDefinitions>
             <Grid
@@ -40,6 +40,9 @@
                     Grid.Column="1"
                     VerticalAlignment="Stretch"
                     VerticalContentAlignment="Center"
+                    TextWrapping="Wrap"
+                    AcceptsReturn="True"
+                    VerticalScrollBarVisibility="Auto"
                     Text="{Binding Value}"
                     x:Name="valueInput"
                     TextChanged="ValueInput_Change" />
