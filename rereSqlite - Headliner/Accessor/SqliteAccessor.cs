@@ -1,4 +1,4 @@
-﻿/*
+/*
 *
 * SqliteAccessor.cs
 *
@@ -96,8 +96,6 @@ public class SqliteAccessor : IDisposable {
     }
 
     public void Execute(SqliteCommand command) {
-        QueryResultAttributes.Clear();
-        QueryResult.Clear();
         using var reader = command.ExecuteReader();
         if (!reader.HasRows) return;
         QueryResultAttributes = FetchResultAttributes(reader);
