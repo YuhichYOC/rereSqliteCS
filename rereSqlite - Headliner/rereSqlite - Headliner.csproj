@@ -50,6 +50,9 @@
       <Page Update="Pages\RunningInformations.xaml">
         <Generator></Generator>
       </Page>
+      <Page Update="Pages\Clone.xaml">
+        <Generator></Generator>
+      </Page>
     </ItemGroup>
 
     <ItemGroup>
@@ -88,6 +91,9 @@
       </Compile>
       <Compile Update="Pages\RunningInformations.xaml.cs">
         <DependentUpon>RunningInformations.xaml</DependentUpon>
+      </Compile>
+      <Compile Update="Pages\Clone.xaml.cs">
+        <DependentUpon>Clone.xaml</DependentUpon>
       </Compile>
     </ItemGroup>
 

@@ -1,4 +1,4 @@
-/*
+﻿/*
 *
 * SqliteAccessor.cs
 *
@@ -55,7 +55,7 @@ public class SqliteAccessor : IDisposable {
         ? new SqliteConnectionStringBuilder {DataSource = dataSource}.ToString()
         : new SqliteConnectionStringBuilder {DataSource = dataSource, Password = password}.ToString();
 
-    private SqliteConnection Connection { get; }
+    public SqliteConnection Connection { get; }
 
     public bool TransactionAlreadyBegun { get; private set; }
 

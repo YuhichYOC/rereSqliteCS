@@ -42,6 +42,10 @@ public partial class RunningInformations : Page {
         Append(null == ex ? info : info + '\n' + ex.Message + '\n' + ex.StackTrace);
     }
 
+    public void AppendInfo(string message) {
+        Append(message);
+    }
+
     private void Append(string info) {
         informations.Text = '\n' + DateTime.Now.ToString() + '\n' + info + '\n' + informations.Text;
     }

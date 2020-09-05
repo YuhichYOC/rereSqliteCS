@@ -49,9 +49,12 @@ public partial class MainWindow : Window {
         pages.AddPage(@"問い合わせ結果", new QueryResultViewList {AppBehind = AppBehind});
         pages.AddPage(@"文字列データ", new StringStorage {AppBehind = AppBehind});
         pages.AddPage(@"バイナリデータ", new BinaryStorage {AppBehind = AppBehind});
+        pages.AddPage(@"クローン", new Clone {AppBehind = AppBehind});
         pages.AddPage(@"Informations", new RunningInformations {AppBehind = AppBehind});
         AppBehind.AppendError += Logger.AppendError;
         AppBehind.AppendError += ((RunningInformations) pages.GetPage(@"Informations")).AppendInfo;
+        AppBehind.AppendInfo += Logger.AppendInfo;
+        AppBehind.AppendInfo += ((RunningInformations) pages.GetPage(@"Informations")).AppendInfo;
         AppBehind.Reload = ((TableList) pages.GetPage(@"テーブル一覧")).FillTableList;
         AppBehind.SetQueryString = ((QueryStringInput) pages.GetPage(@"クエリ実行")).SetQueryString;
         AppBehind.AddPage = ((QueryResultViewList) pages.GetPage(@"問い合わせ結果")).AddPage;

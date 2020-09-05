@@ -24,6 +24,8 @@ using System;
 public class AppBehind {
     public delegate void AppendErrorDelegate(string message, Exception ex);
 
+    public delegate void AppendInfoDelegate(string message);
+
     public delegate void ReloadDelegate();
 
     public delegate void SetQueryStringDelegate(string query);
@@ -49,6 +51,8 @@ public class AppBehind {
     public string Password { get; set; }
 
     public AppendErrorDelegate AppendError { get; set; }
+
+    public AppendInfoDelegate AppendInfo { get; set; }
 
     public ReloadDelegate Reload { get; set; }
 
