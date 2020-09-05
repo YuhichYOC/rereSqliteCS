@@ -21,6 +21,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -101,10 +102,13 @@ public partial class TableList : Page {
         accessor.Execute(accessor.CreateCommand());
         if (0 == accessor.QueryResult.Count) return;
         var query = @" SELECT " + '\n';
-        for (var i = 0; accessor.QueryResult.Count > i; ++i) {
-            query += 0 == i ? @"     " : @"   , ";
-            query += accessor.QueryResult[i][1] + @" " + '\n';
-        }
+        query += accessor.QueryResult
+            .Select((row, index) => new {index, columnName = row[1]})
+            .Aggregate(@"",
+                (ret, item) =>
+                    0 == item.index
+                        ? ret + @"     " + item.columnName + @" " + '\n'
+                        : ret + @"   , " + item.columnName + @" " + '\n');
 
         query += @" FROM " + '\n';
         query += @"     " + tableName + @" " + '\n';
