@@ -32,6 +32,11 @@ public class XReader {
 
     private string fileName;
 
+    public XReader() {
+        currentNodeId = 1;
+        depth = 1;
+    }
+
     public string Directory {
         set => directory = value;
     }
@@ -49,11 +54,6 @@ public class XReader {
     }
 
     public NodeEntity Node { get; private set; }
-
-    public XReader() {
-        currentNodeId = 1;
-        depth = 1;
-    }
 
     public void Parse() {
         using var sr = new StreamReader(FullPath);

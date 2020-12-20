@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:tab="clr-namespace:"
+    xmlns:global="clr-namespace:"
     mc:Ignorable="d"
     Title="MainWindow"
     Height="700"
@@ -15,10 +15,10 @@
             <RowDefinition Height="1*" />
             <RowDefinition Height="23" />
         </Grid.RowDefinitions>
-        <tab:TabPager
+        <global:TabPager
             Grid.Row="0"
             Margin="2"
-            x:Name="pages" />
+            x:Name="Pages" />
         <StatusBar
             Grid.Row="1" />
     </Grid>

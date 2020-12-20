@@ -23,64 +23,65 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using rereSqlite___Headliner.Setup;
 
-public partial class FileBrowse : Page {
-    private AppBehind appBehind;
+namespace rereSqlite___Headliner.Pages {
+    public partial class FileBrowse : Page {
+        private AppBehind appBehind;
 
-    public AppBehind AppBehind {
-        set {
-            appBehind = value;
-            FontFamily = new FontFamily(appBehind.FontFamily);
-            FontSize = appBehind.FontSize;
+        public FileBrowse() {
+            InitializeComponent();
+            Prepare();
         }
-    }
 
-    public FileBrowse() {
-        InitializeComponent();
-        Prepare();
-    }
-
-    private void Prepare() {
-        DataContext = appBehind;
-    }
-
-    private void Browse_Click(object sender, RoutedEventArgs e) {
-        try {
-            var of = new OFWindow {AppBehind = appBehind};
-            of.ShowDialog();
-            if (null == of.SelectedPath || @"".Equals(of.SelectedPath)) return;
-            appBehind.DBFilePath = of.SelectedPath;
-            filePathOutput.Content = appBehind.DBFilePath;
-            appBehind.Password = passwordInput.Text;
-            appBehind.Reload();
-            appBehind.StringStorageSetUp();
-            appBehind.BinaryStorageSetUp();
+        public AppBehind AppBehind {
+            set {
+                appBehind = value;
+                FontFamily = new FontFamily(appBehind.FontFamily);
+                FontSize = appBehind.FontSize;
+            }
         }
-        catch (Exception ex) {
-            appBehind.AppendError(ex.Message, ex);
-        }
-    }
 
-    private void NewFile_Click(object sender, RoutedEventArgs e) {
-        try {
-            var of = new OFWindow {AppBehind = appBehind};
-            of.CreateNewFile();
-            of.ShowDialog();
-            if (null == of.SelectedPath || @"".Equals(of.SelectedPath)) return;
-            appBehind.DBFilePath = of.SelectedPath;
-            filePathOutput.Content = appBehind.DBFilePath;
-            appBehind.Password = passwordInput.Text;
-            var accessor = @"".Equals(appBehind.Password)
-                ? new SqliteAccessor {DataSource = appBehind.DBFilePath}
-                : new SqliteAccessor {DataSource = appBehind.DBFilePath, Password = appBehind.Password};
-            accessor.Open();
-            accessor.Close();
-            appBehind.Reload();
-            appBehind.StringStorageSetUp();
-            appBehind.BinaryStorageSetUp();
+        private void Prepare() {
+            DataContext = appBehind;
         }
-        catch (Exception ex) {
-            appBehind.AppendError(ex.Message, ex);
+
+        private void Browse_Click(object sender, RoutedEventArgs e) {
+            try {
+                var of = new OFWindow {AppBehind = appBehind};
+                of.ShowDialog();
+                if (null == of.SelectedPath || @"".Equals(of.SelectedPath)) return;
+                appBehind.DBFilePath = of.SelectedPath;
+                filePathOutput.Content = appBehind.DBFilePath;
+                appBehind.Password = passwordInput.Text;
+                new DataBaseInitializer {AppBehind = appBehind}.Run();
+                appBehind.Reload();
+            }
+            catch (Exception ex) {
+                appBehind.AppendError(ex.Message, ex);
+            }
+        }
+
+        private void NewFile_Click(object sender, RoutedEventArgs e) {
+            try {
+                var of = new OFWindow {AppBehind = appBehind};
+                of.CreateNewFile();
+                of.ShowDialog();
+                if (null == of.SelectedPath || @"".Equals(of.SelectedPath)) return;
+                appBehind.DBFilePath = of.SelectedPath;
+                filePathOutput.Content = appBehind.DBFilePath;
+                appBehind.Password = passwordInput.Text;
+                var accessor = @"".Equals(appBehind.Password)
+                    ? new SqliteAccessor {DataSource = appBehind.DBFilePath}
+                    : new SqliteAccessor {DataSource = appBehind.DBFilePath, Password = appBehind.Password};
+                accessor.Open();
+                accessor.Close();
+                new DataBaseInitializer {AppBehind = appBehind}.Run();
+                appBehind.Reload();
+            }
+            catch (Exception ex) {
+                appBehind.AppendError(ex.Message, ex);
+            }
         }
     }
 }

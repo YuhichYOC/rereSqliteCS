@@ -12,26 +12,28 @@
         </Grid.RowDefinitions>
         <Grid
             Row="0"
-            Margin="0, 0, 0, 7">
+            Margin="0, 0, 0, 5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="9*" />
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
-            <ScrollViewer
+            <Grid
                 Grid.Column="0"
-                HorizontalScrollBarVisibility="Auto"
-                VerticalScrollBarVisibility="Hidden">
-                <StackPanel
-                    x:Name="tabs"
-                    Orientation="Horizontal" />
-            </ScrollViewer>
+                Margin="0, 0, 5, 0">
+                <ScrollViewer
+                    HorizontalScrollBarVisibility="Auto"
+                    VerticalScrollBarVisibility="Hidden">
+                    <StackPanel
+                        x:Name="Tabs"
+                        Orientation="Horizontal" />
+                </ScrollViewer>
+            </Grid>
             <GridSplitter
                 Grid.Column="0"
-                Margin="2"
                 Width="5" />
             <Button
                 Grid.Column="1"
-                Margin="2, 0, 0, 0"
+                Margin="2"
                 IsEnabled="{Binding EnableRemovePage}"
                 Click="RemovePage_Click">
                 x
@@ -45,6 +47,6 @@
             Height="5" />
         <Frame
             Grid.Row="1"
-            x:Name="canvas" />
+            x:Name="Canvas" />
     </Grid>
 </UserControl>

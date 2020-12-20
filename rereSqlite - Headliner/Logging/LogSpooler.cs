@@ -30,22 +30,12 @@ using log4net.Config;
 
 public class LogSpooler {
     private readonly List<string> errorLogLines;
-    private readonly List<string> warnLogLines;
     private readonly List<string> infoLogLines;
+    private readonly List<string> warnLogLines;
 
     private int safeTicks;
     private int ticks;
     private Timer timer;
-
-    private enum LogType {
-        Error,
-        Warn,
-        Info
-    }
-
-    public int SafeTicks {
-        set => safeTicks = value;
-    }
 
     public LogSpooler() {
         var repo = LogManager.GetRepository(Assembly.GetCallingAssembly());
@@ -57,6 +47,10 @@ public class LogSpooler {
 
         ticks = 0;
         safeTicks = 0;
+    }
+
+    public int SafeTicks {
+        set => safeTicks = value;
     }
 
     public void Start() {
@@ -169,5 +163,11 @@ public class LogSpooler {
         FlushAny(LogType.Error);
         FlushAny(LogType.Warn);
         FlushAny(LogType.Info);
+    }
+
+    private enum LogType {
+        Error,
+        Warn,
+        Info
     }
 }

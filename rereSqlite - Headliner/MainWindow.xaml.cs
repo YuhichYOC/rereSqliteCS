@@ -22,47 +22,48 @@
 using System;
 using System.Windows;
 using System.Windows.Media;
+using rereSqlite___Headliner.Pages;
 
 /// <summary>
 ///     Interaction logic for MainWindow.xaml
 /// </summary>
 public partial class MainWindow : Window {
-    private static LogSpooler Logger { get; } = new LogSpooler();
-
-    private static AppBehind AppBehind { get; } = new AppBehind();
-
     public MainWindow() {
         InitializeComponent();
         Prepare();
     }
+
+    private static LogSpooler Logger { get; } = new LogSpooler();
+
+    private static AppBehind AppBehind { get; } = new AppBehind();
 
     private void Prepare() {
         Height = AppBehind.WindowHeight;
         Width = AppBehind.WindowWidth;
         FontFamily = new FontFamily(AppBehind.FontFamily);
         FontSize = AppBehind.FontSize;
-        pages.AppBehind = AppBehind;
-        pages.EnableRemovePage = false;
-        pages.AddPage(@"ファイルを開く", new FileBrowse {AppBehind = AppBehind});
-        pages.AddPage(@"テーブル一覧", new TableList {AppBehind = AppBehind});
-        pages.AddPage(@"クエリ実行", new QueryStringInput {AppBehind = AppBehind});
-        pages.AddPage(@"問い合わせ結果", new QueryResultViewList {AppBehind = AppBehind});
-        pages.AddPage(@"文字列データ", new StringStorage {AppBehind = AppBehind});
-        pages.AddPage(@"バイナリデータ", new BinaryStorage {AppBehind = AppBehind});
-        pages.AddPage(@"クローン", new Clone {AppBehind = AppBehind});
-        pages.AddPage(@"Informations", new RunningInformations {AppBehind = AppBehind});
+        Pages.AppBehind = AppBehind;
+        Pages.AddPage(@"ファイルを開く", new FileBrowse {AppBehind = AppBehind});
+        Pages.AddPage(@"テーブル一覧", new TableList {AppBehind = AppBehind});
+        Pages.AddPage(@"クエリ実行", new QueryStringInput {AppBehind = AppBehind});
+        Pages.AddPage(@"問い合わせ結果", new QueryResultViewList {AppBehind = AppBehind});
+        Pages.AddPage(@"文字列データ", new StringStorage {AppBehind = AppBehind});
+        Pages.AddPage(@"バイナリデータ", new BinaryStorage {AppBehind = AppBehind});
+        Pages.AddPage(@"タグ", new TagMaster {AppBehind = AppBehind});
+        Pages.AddPage(@"クローン", new Clone {AppBehind = AppBehind});
+        Pages.AddPage(@"Informations", new RunningInformations {AppBehind = AppBehind});
         AppBehind.AppendError += Logger.AppendError;
-        AppBehind.AppendError += ((RunningInformations) pages.GetPage(@"Informations")).AppendInfo;
+        AppBehind.AppendError += ((RunningInformations) Pages.GetPage(@"Informations")).AppendInfo;
         AppBehind.AppendInfo += Logger.AppendInfo;
-        AppBehind.AppendInfo += ((RunningInformations) pages.GetPage(@"Informations")).AppendInfo;
-        AppBehind.Reload = ((TableList) pages.GetPage(@"テーブル一覧")).FillTableList;
-        AppBehind.SetQueryString = ((QueryStringInput) pages.GetPage(@"クエリ実行")).SetQueryString;
-        AppBehind.AddPage = ((QueryResultViewList) pages.GetPage(@"問い合わせ結果")).AddPage;
-        AppBehind.StringStorageSetUp = ((StringStorage) pages.GetPage(@"文字列データ")).SetUp;
-        AppBehind.BinaryStorageSetUp = ((BinaryStorage) pages.GetPage(@"バイナリデータ")).SetUp;
+        AppBehind.AppendInfo += ((RunningInformations) Pages.GetPage(@"Informations")).AppendInfo;
+        AppBehind.Reload = ((TableList) Pages.GetPage(@"テーブル一覧")).FillTableList;
+        AppBehind.Reload += ((BinaryStorage) Pages.GetPage(@"バイナリデータ")).FillTagInput;
+        AppBehind.Reload += ((StringStorage) Pages.GetPage(@"文字列データ")).FillTagInput;
+        AppBehind.SetQueryString = ((QueryStringInput) Pages.GetPage(@"クエリ実行")).SetQueryString;
+        AppBehind.AddPage = ((QueryResultViewList) Pages.GetPage(@"問い合わせ結果")).AddPage;
         Logger.SafeTicks = -1;
         Logger.Start();
-        pages.SwitchPage(0);
+        Pages.SwitchPage(0);
     }
 
     private void Window_Close(object sender, EventArgs e) {

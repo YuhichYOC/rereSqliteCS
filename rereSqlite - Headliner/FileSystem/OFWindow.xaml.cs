@@ -27,58 +27,55 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-public partial class OFWindow : Window {
+public partial class OFWindow {
     private AppBehind appBehind;
-
-    private FileSystemTreeEx driveTreeOperator;
 
     private bool createNewFile;
 
-    public AppBehind AppBehind {
-        set {
-            appBehind = value;
-            FontFamily = new FontFamily(appBehind.FontFamily);
-            FontSize = appBehind.FontSize;
-            RowHeight = appBehind.FontSize + appBehind.DataGridRowHeightPlus;
-        }
-    }
-
-    public double RowHeight { get; set; }
-
-    public string SelectedPath { get; private set; }
+    private FileSystemTreeEx driveTreeOperator;
 
     public OFWindow() {
         InitializeComponent();
         Prepare();
     }
 
+    public AppBehind AppBehind {
+        set {
+            appBehind = value;
+            FontFamily = new FontFamily(appBehind.FontFamily);
+            FontSize = appBehind.FontSize;
+        }
+    }
+
+    public string SelectedPath { get; private set; }
+
     private void Prepare() {
         createNewFile = false;
         FillDriveLetters();
         PrepareDriveTree(PrepareFileList());
-        openButton.Click += OpenButton_Click;
+        OpenButton.Click += OpenButton_Click;
         DataContext = this;
     }
 
     private void FillDriveLetters() {
-        drives.ItemsSource = Directory.GetLogicalDrives().ToList();
-        drives.SelectionChanged += Drives_Change;
+        Drives.ItemsSource = Directory.GetLogicalDrives().ToList();
+        Drives.SelectionChanged += Drives_Change;
     }
 
     private OperatorEx PrepareFileList() {
-        var fileListOperator = new OperatorEx {AppBehind = appBehind};
-        fileListOperator.Prepare(fileList);
+        var fileListOperator = new OperatorEx();
+        fileListOperator.Prepare(FileList);
         fileListOperator.AddColumn(@"FileName", @"ファイル名");
         fileListOperator.CreateColumns();
-        fileList.SelectedCellsChanged += FileList_Select;
+        FileList.SelectedCellsChanged += FileList_Select;
         return fileListOperator;
     }
 
     private void PrepareDriveTree(OperatorEx gridOperator) {
         driveTreeOperator = new FileSystemTreeEx {AppBehind = appBehind};
-        driveTreeOperator.Prepare(driveTree);
+        driveTreeOperator.Prepare(DriveTree);
         driveTreeOperator.GridOperator = gridOperator;
-        driveTreeOperator.FileFullPathInput = fileFullPathInput;
+        driveTreeOperator.FileFullPathInput = FileFullPathInput;
         driveTreeOperator.CreateNewFile = createNewFile;
     }
 
@@ -88,7 +85,7 @@ public partial class OFWindow : Window {
     }
 
     private void SwitchDrive() {
-        driveTreeOperator.Fill(drives.SelectedItem.ToString());
+        driveTreeOperator.Fill(Drives.SelectedItem.ToString());
     }
 
     private void Drives_Change(object sender, SelectionChangedEventArgs e) {
@@ -104,7 +101,7 @@ public partial class OFWindow : Window {
         try {
             if (!((sender as DataGrid)?.SelectedItem is RowEntity row)) return;
             if (row.TryGetMember(@"FileName", out var selectedFile))
-                fileFullPathInput.Text = selectedFile as string ?? @"";
+                FileFullPathInput.Text = selectedFile as string ?? @"";
         }
         catch (Exception ex) {
             appBehind.AppendError(ex.Message, ex);
@@ -113,9 +110,9 @@ public partial class OFWindow : Window {
 
     private void OpenButton_Click(object sender, RoutedEventArgs e) {
         try {
-            if (createNewFile && File.Exists(fileFullPathInput.Text) && MessageBoxResult.No ==
+            if (createNewFile && File.Exists(FileFullPathInput.Text) && MessageBoxResult.No ==
                 MessageBox.Show(this, @"既に存在するファイルです。上書きしますか？", @"上書き確認", MessageBoxButton.YesNo)) return;
-            SelectedPath = fileFullPathInput.Text;
+            SelectedPath = FileFullPathInput.Text;
             Close();
         }
         catch (Exception ex) {
@@ -124,12 +121,6 @@ public partial class OFWindow : Window {
     }
 
     private class OperatorEx : Operator {
-        private AppBehind appBehind;
-
-        public AppBehind AppBehind {
-            set => appBehind = value;
-        }
-
         public void DisplayDirectory(FileSystemNode node) {
             Blank();
             TryGetFiles(node.FullPath)?.ToList().ForEach(f => {

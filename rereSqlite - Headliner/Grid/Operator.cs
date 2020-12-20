@@ -24,9 +24,8 @@ using System.Collections.ObjectModel;
 using System.Windows.Controls;
 
 public class Operator {
-    private DataGrid ownGrid;
-
     private List<ColumnDefinition> columns;
+    private DataGrid ownGrid;
 
     private ObservableCollection<RowEntity> rows;
 

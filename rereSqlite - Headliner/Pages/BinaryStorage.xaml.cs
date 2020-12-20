@@ -22,83 +22,72 @@
 using System;
 using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
+using rereSqlite___Headliner.Data;
+using rereSqlite___Headliner.UserControls;
 
-public partial class BinaryStorage : Page {
-    private AppBehind appBehind;
+namespace rereSqlite___Headliner.Pages {
+    public partial class BinaryStorage {
+        private AppBehind appBehind;
 
-    public AppBehind AppBehind {
-        set {
-            appBehind = value;
-            FontFamily = new FontFamily(appBehind.FontFamily);
-            FontSize = appBehind.FontSize;
-        }
-    }
-
-    public BinaryStorage() {
-        InitializeComponent();
-        Prepare();
-    }
-
-    private void Prepare() {
-        DataContext = appBehind;
-    }
-
-    public void SetUp() {
-        var accessor = new SqliteAccessor {
-            DataSource = appBehind.DBFilePath, Password = appBehind.Password,
-            QueryString =
-                @" SELECT COUNT(NAME) AS COUNT_TABLES FROM sqlite_master WHERE TYPE = 'table' AND NAME = 'BINARY_STORAGE' "
-        };
-        accessor.Open();
-        if (0 < (long) accessor.ExecuteScalar(accessor.CreateCommand())) {
-            accessor.Close();
-            return;
+        public BinaryStorage() {
+            InitializeComponent();
+            Prepare();
         }
 
-        accessor.QueryString =
-            @" CREATE TABLE BINARY_STORAGE ( KEY TEXT, FILE_NAME TEXT, VALUE BLOB, PRIMARY KEY (KEY) ) ";
-        accessor.Execute(accessor.CreateCommand());
-        accessor.Close();
-    }
+        public AppBehind AppBehind {
+            set {
+                appBehind = value;
+                FontFamily = new FontFamily(appBehind.FontFamily);
+                FontSize = appBehind.FontSize;
+            }
+        }
 
-    private void PerformSelect() {
-        var accessor = new SqliteAccessor {
-            DataSource = appBehind.DBFilePath, Password = appBehind.Password,
-            QueryString = @" SELECT KEY, FILE_NAME FROM BINARY_STORAGE WHERE KEY LIKE @key || '%' "
-        };
-        accessor.Open();
-        var command = accessor.CreateCommand();
-        command.Parameters.AddWithValue(@"@key", keyInput.Text);
-        accessor.Execute(command);
-        accessor.Close();
-        FillCardList(accessor.QueryResult);
-    }
+        private void Prepare() {
+            DataContext = this;
+        }
 
-    private void FillCardList(List<List<object>> rows) {
-        cardList.Children.Clear();
-        var keyHit = false;
-        rows.ForEach(row => {
-            cardList.Children.Add(new BinaryCard {
-                AppBehind = appBehind, Key = row[0].ToString(), FileName = row[1].ToString(), HasBinaryInDb = true,
-                HasBeenAnyOperation = false, Margin = new Thickness(0, 2, 0, 0)
+        public void FillTagInput() {
+            TagInput.Items.Add(new KeyValuePair<string, string>(@"", @""));
+            new Data.TagMaster().Query(appBehind).ForEach(row => {
+                TagInput.Items.Add(new KeyValuePair<string, string>(row[0].ToString(), row[0].ToString()));
             });
-            if (keyInput.Text.Equals(row[0].ToString())) keyHit = true;
-        });
-        if (keyHit) return;
-        cardList.Children.Add(new BinaryCard {
-            AppBehind = appBehind, Key = keyInput.Text, FileName = @"", HasBinaryInDb = false,
-            HasBeenAnyOperation = false, Margin = new Thickness(0, 2, 0, 0)
-        });
-    }
-
-    private void KeyInput_Change(object sender, RoutedEventArgs e) {
-        try {
-            PerformSelect();
         }
-        catch (Exception ex) {
-            appBehind.AppendError(ex.Message, ex);
+
+        private void PerformSelect() {
+            FillCardList(new Data.BinaryStorage().Query(appBehind, KeyInput.Text, TagInput.SelectedValue));
+        }
+
+        private void FillCardList(List<List<object>> rows) {
+            CardList.Children.Clear();
+            var keyHit = false;
+            rows.ForEach(row => {
+                AddCard(row[0].ToString(), row[1].ToString(), true, new Thickness(0, 2, 0, 0));
+                if (KeyInput.Text.Equals(row[0].ToString())) keyHit = true;
+            });
+            if (keyHit) return;
+            if (string.IsNullOrEmpty(KeyInput.Text)) return;
+            AddCard(KeyInput.Text, @"", false, new Thickness(0, 2, 0, 0));
+        }
+
+        private void AddCard(string key, string fileName, bool hasBinaryInDB, Thickness margin) {
+            CardList.Children.Add(new BinaryCard {
+                AppBehind = appBehind,
+                Key = key,
+                FileName = fileName,
+                HasBinaryInDb = hasBinaryInDB,
+                Margin = margin
+            });
+            ((BinaryCard) CardList.Children[^1]).FillTagInput(new BinaryTags().Query(appBehind, key));
+        }
+
+        private void Search_Click(object sender, RoutedEventArgs e) {
+            try {
+                PerformSelect();
+            }
+            catch (Exception ex) {
+                appBehind.AppendError(ex.Message, ex);
+            }
         }
     }
 }

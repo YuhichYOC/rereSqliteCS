@@ -25,11 +25,22 @@ using System.Linq;
 using Microsoft.Data.Sqlite;
 
 public class SqliteCloner {
+    private const string QuerySelectSqliteMaster =
+        @" SELECT               " +
+        @"     NAME,            " +
+        @"     SQL              " +
+        @" FROM                 " +
+        @"     sqlite_master    " +
+        @" WHERE                " +
+        @"     TYPE   = 'table' " +
+        @" ORDER BY             " +
+        @"     NAME             ";
+
     private SqliteAccessor accessorFrom;
 
-    private List<TableInfo> tables;
-
     private SqliteAccessor accessorTo;
+
+    private List<TableInfo> tables;
 
     public string DataSourceFrom { get; set; }
 
@@ -39,7 +50,7 @@ public class SqliteCloner {
 
     public string PasswordTo { get; set; }
 
-    public void run() {
+    public void Run() {
         accessorFrom = new SqliteAccessor {DataSource = DataSourceFrom, Password = PasswordFrom};
         accessorFrom.Open();
         accessorTo = new SqliteAccessor {DataSource = DataSourceTo, Password = PasswordTo};
@@ -58,7 +69,7 @@ public class SqliteCloner {
 
     private void FetchTables() {
         tables = new List<TableInfo>();
-        accessorFrom.QueryString = @" SELECT NAME, SQL FROM sqlite_master WHERE TYPE = 'table' ORDER BY NAME ";
+        accessorFrom.QueryString = QuerySelectSqliteMaster;
         accessorFrom.Execute(accessorFrom.CreateCommand());
         var queryResult = accessorFrom.QueryResult;
         queryResult.ForEach(row => {
@@ -116,6 +127,10 @@ public class SqliteCloner {
     }
 
     private class TableInfo {
+        public TableInfo() {
+            ColumnInfos = new List<ColumnInfo>();
+        }
+
         public string TableName { get; set; }
 
         public string Sql { get; set; }
@@ -125,10 +140,6 @@ public class SqliteCloner {
         public bool HasBlob => ColumnInfos.Any(i => i.IsBlob);
 
         public IEnumerable<ColumnInfo> Blobs => ColumnInfos.Where(i => i.IsBlob);
-
-        public TableInfo() {
-            ColumnInfos = new List<ColumnInfo>();
-        }
 
         public void AddColumn(int index, string columnName, string columnType) {
             ColumnInfos.Add(new ColumnInfo {Index = index, ColumnName = columnName, ColumnType = columnType});

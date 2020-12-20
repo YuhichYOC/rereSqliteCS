@@ -34,6 +34,11 @@ public partial class TabPager : UserControl {
 
     private List<Tuple<Button, Page>> pages;
 
+    public TabPager() {
+        InitializeComponent();
+        Prepare();
+    }
+
     public AppBehind AppBehind {
         set {
             appBehind = value;
@@ -46,11 +51,6 @@ public partial class TabPager : UserControl {
 
     public int PagesCount => pages.Count;
 
-    public TabPager() {
-        InitializeComponent();
-        Prepare();
-    }
-
     private void Prepare() {
         currentPage = null;
         pages = new List<Tuple<Button, Page>>();
@@ -58,12 +58,12 @@ public partial class TabPager : UserControl {
     }
 
     public void AddPage(string name, Page page) {
-        var addButton = new Button {Content = name, Tag = page, Margin = new Thickness(0, 0, 2, 0)};
+        var addButton = new Button {Content = name, Tag = page, Margin = new Thickness(2)};
         addButton.Click += (senderObj, e) => {
             currentPage = pages.First(page => page.Item2 == ((Button) senderObj).Tag);
             SwitchPage();
         };
-        tabs.Children.Add(addButton);
+        Tabs.Children.Add(addButton);
         currentPage = new Tuple<Button, Page>(addButton, page);
         pages.Add(currentPage);
     }
@@ -74,11 +74,11 @@ public partial class TabPager : UserControl {
 
     private void SwitchPage() {
         if (null == currentPage) {
-            canvas.Content = null;
+            Canvas.Content = null;
         }
         else {
-            canvas.Content = currentPage.Item2;
-            canvas.NavigationUIVisibility = NavigationUIVisibility.Hidden;
+            Canvas.Content = currentPage.Item2;
+            Canvas.NavigationUIVisibility = NavigationUIVisibility.Hidden;
         }
     }
 
@@ -92,7 +92,7 @@ public partial class TabPager : UserControl {
         if (null == currentPage) return;
         var removePage = currentPage;
         currentPage = 0 >= pages.IndexOf(currentPage) ? null : pages[pages.IndexOf(currentPage) - 1];
-        tabs.Children.Remove(removePage.Item1);
+        Tabs.Children.Remove(removePage.Item1);
         pages.Remove(removePage);
         SwitchPage();
     }

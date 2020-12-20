@@ -22,44 +22,46 @@
 using System.Windows.Controls;
 using System.Windows.Media;
 
-public partial class QueryResultView : Page {
-    private AppBehind appBehind;
+namespace rereSqlite___Headliner.Pages {
+    public partial class QueryResultView : Page {
+        private AppBehind appBehind;
 
-    private Operator dataGridOperator;
+        private Operator dataGridOperator;
 
-    public AppBehind AppBehind {
-        set {
-            appBehind = value;
-            FontFamily = new FontFamily(appBehind.FontFamily);
-            FontSize = appBehind.FontSize;
-            RowHeight = appBehind.FontSize + appBehind.DataGridRowHeightPlus;
+        public QueryResultView() {
+            InitializeComponent();
+            Prepare();
         }
-    }
 
-    public double RowHeight { get; set; }
+        public AppBehind AppBehind {
+            set {
+                appBehind = value;
+                FontFamily = new FontFamily(appBehind.FontFamily);
+                FontSize = appBehind.FontSize;
+                RowHeight = appBehind.FontSize + appBehind.DataGridRowHeightPlus;
+            }
+        }
 
-    public QueryResultView() {
-        InitializeComponent();
-        Prepare();
-    }
+        public double RowHeight { get; set; }
 
-    private void Prepare() {
-        dataGridOperator = new Operator();
-        dataGridOperator.Prepare(ownGrid);
-        DataContext = this;
-    }
+        private void Prepare() {
+            dataGridOperator = new Operator();
+            dataGridOperator.Prepare(ownGrid);
+            DataContext = this;
+        }
 
-    public void Show(SqliteAccessor accessor) {
-        if (0 == accessor.QueryResultAttributes.Count || 0 == accessor.QueryResult.Count) return;
-        accessor.QueryResultAttributes.ForEach(a => dataGridOperator.AddColumn(a.Item1, a.Item1));
-        dataGridOperator.CreateColumns();
-        accessor.QueryResult.ForEach(row => {
-            var addRow = new RowEntity();
-            for (var i = 0; accessor.QueryResultAttributes.Count > i; ++i)
-                addRow.TrySetMember(accessor.QueryResultAttributes[i].Item1,
-                    accessor.IsBlobColumn(accessor.QueryResultAttributes, i) ? @"[Blob data]" : row[i]);
-            dataGridOperator.AddRow(addRow);
-        });
-        dataGridOperator.Refresh();
+        public void Show(SqliteAccessor accessor) {
+            if (0 == accessor.QueryResultAttributes.Count || 0 == accessor.QueryResult.Count) return;
+            accessor.QueryResultAttributes.ForEach(a => dataGridOperator.AddColumn(a.Item1, a.Item1));
+            dataGridOperator.CreateColumns();
+            accessor.QueryResult.ForEach(row => {
+                var addRow = new RowEntity();
+                for (var i = 0; accessor.QueryResultAttributes.Count > i; ++i)
+                    addRow.TrySetMember(accessor.QueryResultAttributes[i].Item1,
+                        accessor.IsBlobColumn(accessor.QueryResultAttributes, i) ? @"[Blob data]" : row[i]);
+                dataGridOperator.AddRow(addRow);
+            });
+            dataGridOperator.Refresh();
+        }
     }
 }

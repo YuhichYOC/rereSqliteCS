@@ -22,6 +22,8 @@
 using System;
 
 public class AppBehind {
+    public delegate void AddPageDelegate(SqliteAccessor accessor);
+
     public delegate void AppendErrorDelegate(string message, Exception ex);
 
     public delegate void AppendInfoDelegate(string message);
@@ -30,11 +32,16 @@ public class AppBehind {
 
     public delegate void SetQueryStringDelegate(string query);
 
-    public delegate void AddPageDelegate(SqliteAccessor accessor);
-
-    public delegate void StringStorageSetUpDelegate();
-
-    public delegate void BinaryStorageSetUpDelegate();
+    public AppBehind() {
+        var r = new XReader {Directory = @".", FileName = @"Setting.config"};
+        r.Parse();
+        WindowHeight = int.Parse(r.Node.Find(@"SettingDef").Find(@"Window").Find(@"Height").NodeValue);
+        WindowWidth = int.Parse(r.Node.Find(@"SettingDef").Find(@"Window").Find(@"Width").NodeValue);
+        FontFamily = r.Node.Find(@"SettingDef").Find(@"Window").Find(@"FontFamily").NodeValue;
+        FontSize = double.Parse(r.Node.Find(@"SettingDef").Find(@"Window").Find(@"FontSize").NodeValue);
+        DataGridRowHeightPlus =
+            double.Parse(r.Node.Find(@"SettingDef").Find(@"DataGrid").Find(@"RowHeightPlus").NodeValue);
+    }
 
     public int WindowHeight { get; }
 
@@ -59,19 +66,4 @@ public class AppBehind {
     public SetQueryStringDelegate SetQueryString { get; set; }
 
     public AddPageDelegate AddPage { get; set; }
-
-    public StringStorageSetUpDelegate StringStorageSetUp { get; set; }
-
-    public BinaryStorageSetUpDelegate BinaryStorageSetUp { get; set; }
-
-    public AppBehind() {
-        var r = new XReader {Directory = @".", FileName = @"Setting.config"};
-        r.Parse();
-        WindowHeight = int.Parse(r.Node.Find(@"SettingDef").Find(@"Window").Find(@"Height").NodeValue);
-        WindowWidth = int.Parse(r.Node.Find(@"SettingDef").Find(@"Window").Find(@"Width").NodeValue);
-        FontFamily = r.Node.Find(@"SettingDef").Find(@"Window").Find(@"FontFamily").NodeValue;
-        FontSize = double.Parse(r.Node.Find(@"SettingDef").Find(@"Window").Find(@"FontSize").NodeValue);
-        DataGridRowHeightPlus =
-            double.Parse(r.Node.Find(@"SettingDef").Find(@"DataGrid").Find(@"RowHeightPlus").NodeValue);
-    }
 }

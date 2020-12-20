@@ -27,113 +27,115 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
-public partial class TableList : Page {
-    private AppBehind appBehind;
+namespace rereSqlite___Headliner.Pages {
+    public partial class TableList : Page {
+        private AppBehind appBehind;
 
-    private Operator tableListOperator;
+        private Operator tableListOperator;
 
-    public AppBehind AppBehind {
-        set {
-            appBehind = value;
-            FontFamily = new FontFamily(appBehind.FontFamily);
-            FontSize = appBehind.FontSize;
-            RowHeight = appBehind.FontSize + appBehind.DataGridRowHeightPlus;
+        public TableList() {
+            InitializeComponent();
+            Prepare();
         }
-    }
 
-    public double RowHeight { get; set; }
+        public AppBehind AppBehind {
+            set {
+                appBehind = value;
+                FontFamily = new FontFamily(appBehind.FontFamily);
+                FontSize = appBehind.FontSize;
+                RowHeight = appBehind.FontSize + appBehind.DataGridRowHeightPlus;
+            }
+        }
 
-    public TableList() {
-        InitializeComponent();
-        Prepare();
-    }
+        public double RowHeight { get; set; }
 
-    private void Prepare() {
-        tableListOperator = new Operator();
-        tableListOperator.Prepare(tableList);
-        tableListOperator.AddColumn(@"TableName", @"テーブル");
-        tableListOperator.CreateColumns();
-        DataContext = this;
-    }
+        private void Prepare() {
+            tableListOperator = new Operator();
+            tableListOperator.Prepare(tableList);
+            tableListOperator.AddColumn(@"TableName", @"テーブル");
+            tableListOperator.CreateColumns();
+            DataContext = this;
+        }
 
-    public void FillTableList() {
-        if (@"".Equals(appBehind.DBFilePath)) return;
-        FillTableList(QueryTables());
-    }
+        public void FillTableList() {
+            if (@"".Equals(appBehind.DBFilePath)) return;
+            FillTableList(QueryTables());
+        }
 
-    private List<List<object>> QueryTables() {
-        var accessor = new SqliteAccessor
-            {DataSource = appBehind.DBFilePath, Password = appBehind.Password};
-        accessor.Open();
-        if (@"".Equals(filterInput.Text.Trim())) {
-            accessor.QueryString = @" SELECT NAME FROM sqlite_master WHERE TYPE = 'table' ORDER BY NAME ";
+        private List<List<object>> QueryTables() {
+            var accessor = new SqliteAccessor
+                {DataSource = appBehind.DBFilePath, Password = appBehind.Password};
+            accessor.Open();
+            if (@"".Equals(filterInput.Text.Trim())) {
+                accessor.QueryString = @" SELECT NAME FROM sqlite_master WHERE TYPE = 'table' ORDER BY NAME ";
+                accessor.Execute(accessor.CreateCommand());
+            }
+            else {
+                accessor.QueryString =
+                    @" SELECT NAME FROM sqlite_master WHERE TYPE = 'table' AND NAME LIKE '%' || @filter || '%' ORDER BY NAME ";
+                var com = accessor.CreateCommand();
+                com.Parameters.AddWithValue(@"@filter", filterInput.Text);
+                accessor.Execute(com);
+            }
+
+            accessor.Close();
+            return accessor.QueryResult;
+        }
+
+        private void FillTableList(List<List<object>> queryResult) {
+            tableListOperator.Blank();
+            queryResult.ForEach(row => {
+                var addRow = new RowEntity();
+                addRow.TrySetMember(@"TableName", row[0].ToString());
+                tableListOperator.AddRow(addRow);
+            });
+
+            tableListOperator.Refresh();
+        }
+
+        private void PerformQueryWholeTable(string tableName) {
+            if (@"".Equals(tableName)) return;
+            var accessor = new SqliteAccessor {
+                DataSource = appBehind.DBFilePath, Password = appBehind.Password,
+                QueryString = @" PRAGMA table_info('" + tableName + "') "
+            };
+            accessor.Open();
             accessor.Execute(accessor.CreateCommand());
+            if (0 == accessor.QueryResult.Count) return;
+            var query = @" SELECT " + '\n';
+            query += accessor.QueryResult
+                .Select((row, index) => new {index, columnName = row[1]})
+                .Aggregate(@"",
+                    (ret, item) =>
+                        0 == item.index
+                            ? ret + @"     " + item.columnName + @" " + '\n'
+                            : ret + @"   , " + item.columnName + @" " + '\n');
+
+            query += @" FROM " + '\n';
+            query += @"     " + tableName + @" " + '\n';
+            accessor.QueryString = query;
+            accessor.Execute(accessor.CreateCommand());
+            accessor.Close();
+            appBehind.SetQueryString(query);
+            appBehind.AddPage(accessor);
         }
-        else {
-            accessor.QueryString =
-                @" SELECT NAME FROM sqlite_master WHERE TYPE = 'table' AND NAME LIKE '%' || @filter || '%' ORDER BY NAME ";
-            var com = accessor.CreateCommand();
-            com.Parameters.AddWithValue(@"@filter", filterInput.Text);
-            accessor.Execute(com);
+
+        private void Reload_AnyEvent(object sender, RoutedEventArgs e) {
+            try {
+                FillTableList();
+            }
+            catch (Exception ex) {
+                appBehind.AppendError(ex.Message, ex);
+            }
         }
 
-        accessor.Close();
-        return accessor.QueryResult;
-    }
-
-    private void FillTableList(List<List<object>> queryResult) {
-        tableListOperator.Blank();
-        queryResult.ForEach(row => {
-            var addRow = new RowEntity();
-            addRow.TrySetMember(@"TableName", row[0].ToString());
-            tableListOperator.AddRow(addRow);
-        });
-
-        tableListOperator.Refresh();
-    }
-
-    private void PerformQueryWholeTable(string tableName) {
-        if (@"".Equals(tableName)) return;
-        var accessor = new SqliteAccessor {
-            DataSource = appBehind.DBFilePath, Password = appBehind.Password,
-            QueryString = @" PRAGMA table_info('" + tableName + "') "
-        };
-        accessor.Open();
-        accessor.Execute(accessor.CreateCommand());
-        if (0 == accessor.QueryResult.Count) return;
-        var query = @" SELECT " + '\n';
-        query += accessor.QueryResult
-            .Select((row, index) => new {index, columnName = row[1]})
-            .Aggregate(@"",
-                (ret, item) =>
-                    0 == item.index
-                        ? ret + @"     " + item.columnName + @" " + '\n'
-                        : ret + @"   , " + item.columnName + @" " + '\n');
-
-        query += @" FROM " + '\n';
-        query += @"     " + tableName + @" " + '\n';
-        accessor.QueryString = query;
-        accessor.Execute(accessor.CreateCommand());
-        accessor.Close();
-        appBehind.SetQueryString(query);
-        appBehind.AddPage(accessor);
-    }
-
-    private void Reload_AnyEvent(object sender, RoutedEventArgs e) {
-        try {
-            FillTableList();
-        }
-        catch (Exception ex) {
-            appBehind.AppendError(ex.Message, ex);
-        }
-    }
-
-    private void TableList_DoubleClick(object sender, MouseButtonEventArgs e) {
-        try {
-            PerformQueryWholeTable((e.OriginalSource as TextBlock)?.Text);
-        }
-        catch (Exception ex) {
-            appBehind.AppendError(ex.Message, ex);
+        private void TableList_DoubleClick(object sender, MouseButtonEventArgs e) {
+            try {
+                PerformQueryWholeTable((e.OriginalSource as TextBlock)?.Text);
+            }
+            catch (Exception ex) {
+                appBehind.AppendError(ex.Message, ex);
+            }
         }
     }
 }

@@ -23,25 +23,32 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
-using System.Linq;
 using Microsoft.Data.Sqlite;
 
 public class SqliteAccessor : IDisposable {
-    private const string Type_SqliteText = @"text";
-    private const string Type_SqliteInteger = @"integer";
-    private const string Type_SqliteReal = @"real";
-    private const string Type_SqliteBlob = @"blob";
+    private const string TypeSqliteText = @"text";
+    private const string TypeSqliteInteger = @"integer";
+    private const string TypeSqliteReal = @"real";
+    private const string TypeSqliteBlob = @"blob";
 
-    private const string DotNet_Text = @"String";
-    private const string DotNet_Integer = @"Integer";
-    private const string DotNet_Real = @"Double";
-    private const string DotNet_Blob = @"Object";
-    private const string DotNet_Other = @"not supported";
+    private const string DotNetText = @"String";
+    private const string DotNetInteger = @"Integer";
+    private const string DotNetReal = @"Double";
+    private const string DotNetBlob = @"Object";
+    private const string DotNetOther = @"not supported";
 
     private string dataSource;
     private string password;
 
     private string queryString;
+
+    public SqliteAccessor() {
+        dataSource = @"";
+        password = @"";
+        Connection = new SqliteConnection();
+        QueryResultAttributes = new List<Tuple<string, string>>();
+        QueryResult = new List<List<object>>();
+    }
 
     public string DataSource {
         set => dataSource = value;
@@ -67,12 +74,9 @@ public class SqliteAccessor : IDisposable {
 
     public List<List<object>> QueryResult { get; private set; }
 
-    public SqliteAccessor() {
-        dataSource = @"";
-        password = @"";
-        Connection = new SqliteConnection();
-        QueryResultAttributes = new List<Tuple<string, string>>();
-        QueryResult = new List<List<object>>();
+    public void Dispose() {
+        if (null != Connection && ConnectionState.Open == Connection.State) Connection.Close();
+        Connection?.Dispose();
     }
 
     public void Open() {
@@ -113,11 +117,11 @@ public class SqliteAccessor : IDisposable {
 
     private string TypeNameFromSqliteTypeName(string sqliteTypeName) {
         return sqliteTypeName.ToLower() switch {
-            Type_SqliteText => DotNet_Text,
-            Type_SqliteInteger => DotNet_Integer,
-            Type_SqliteReal => DotNet_Real,
-            Type_SqliteBlob => DotNet_Blob,
-            _ => DotNet_Other
+            TypeSqliteText => DotNetText,
+            TypeSqliteInteger => DotNetInteger,
+            TypeSqliteReal => DotNetReal,
+            TypeSqliteBlob => DotNetBlob,
+            _ => DotNetOther
         };
     }
 
@@ -132,12 +136,8 @@ public class SqliteAccessor : IDisposable {
         return ret;
     }
 
-    public int ColumnIndexFromName(List<Tuple<string, string>> attributes, string name) {
-        return attributes.IndexOf(attributes.First(a => name.Equals(a.Item1)));
-    }
-
     public bool IsBlobColumn(List<Tuple<string, string>> attributes, int column) {
-        return DotNet_Blob.Equals(attributes[column].Item2);
+        return DotNetBlob.Equals(attributes[column].Item2);
     }
 
     public void RetrieveBlob(SqliteCommand command, FileStream outputStream, int blobColumn) {
@@ -160,14 +160,5 @@ public class SqliteAccessor : IDisposable {
     public void Close() {
         if (null == Connection || ConnectionState.Open != Connection.State) return;
         Connection.Close();
-    }
-
-    public void Dispose() {
-        Dispose(true);
-    }
-
-    private void Dispose(bool value) {
-        if (null != Connection && ConnectionState.Open == Connection.State) Connection.Close();
-        Connection?.Dispose();
     }
 }

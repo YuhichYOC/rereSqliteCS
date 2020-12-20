@@ -23,106 +23,109 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using rereSqlite___Headliner.Accessor;
 
-public partial class QueryStringInput : Page {
-    private AppBehind appBehind;
+namespace rereSqlite___Headliner.Pages {
+    public partial class QueryStringInput : Page {
+        private AppBehind appBehind;
 
-    private QueryChunk qc;
+        private QueryChunk qc;
 
-    public AppBehind AppBehind {
-        set {
-            appBehind = value;
-            FontFamily = new FontFamily(appBehind.FontFamily);
-            FontSize = appBehind.FontSize;
+        public QueryStringInput() {
+            InitializeComponent();
+            Prepare();
         }
-    }
 
-    public QueryStringInput() {
-        InitializeComponent();
-        Prepare();
-    }
+        public AppBehind AppBehind {
+            set {
+                appBehind = value;
+                FontFamily = new FontFamily(appBehind.FontFamily);
+                FontSize = appBehind.FontSize;
+            }
+        }
 
-    private void Prepare() {
-        executeButton.IsEnabled = true;
-        beginButton.IsEnabled = true;
-        commitButton.IsEnabled = false;
-        rollbackButton.IsEnabled = false;
-    }
+        private void Prepare() {
+            executeButton.IsEnabled = true;
+            beginButton.IsEnabled = true;
+            commitButton.IsEnabled = false;
+            rollbackButton.IsEnabled = false;
+        }
 
-    public void SetQueryString(string arg) {
-        queryInput.Text = arg;
-    }
+        public void SetQueryString(string arg) {
+            queryInput.Text = arg;
+        }
 
-    private void PerformExecute() {
-        var openNew = !(null != qc && qc.TransactionAlreadyBegun);
-        if (openNew) {
+        private void PerformExecute() {
+            var openNew = !(null != qc && qc.TransactionAlreadyBegun);
+            if (openNew) {
+                qc = new QueryChunk(appBehind);
+                qc.Open();
+            }
+
+            qc.AddCommand(queryInput.Text);
+            qc.Execute();
+            if (openNew) qc.Close();
+        }
+
+        private void PerformBegin() {
+            qc?.Close();
             qc = new QueryChunk(appBehind);
-            qc.Open();
+            qc.Begin();
+            beginButton.IsEnabled = false;
+            commitButton.IsEnabled = true;
+            rollbackButton.IsEnabled = true;
         }
 
-        qc.AddCommand(queryInput.Text);
-        qc.Execute();
-        if (openNew) qc.Close();
-    }
-
-    private void PerformBegin() {
-        qc?.Close();
-        qc = new QueryChunk(appBehind);
-        qc.Begin();
-        beginButton.IsEnabled = false;
-        commitButton.IsEnabled = true;
-        rollbackButton.IsEnabled = true;
-    }
-
-    private void PerformCommit() {
-        qc.Commit();
-        qc.Close();
-        beginButton.IsEnabled = true;
-        commitButton.IsEnabled = false;
-        rollbackButton.IsEnabled = false;
-    }
-
-    private void PerformRollback() {
-        qc.Rollback();
-        qc.Close();
-        beginButton.IsEnabled = true;
-        commitButton.IsEnabled = false;
-        rollbackButton.IsEnabled = false;
-    }
-
-    private void Execute_Click(object sender, RoutedEventArgs e) {
-        try {
-            PerformExecute();
+        private void PerformCommit() {
+            qc.Commit();
+            qc.Close();
+            beginButton.IsEnabled = true;
+            commitButton.IsEnabled = false;
+            rollbackButton.IsEnabled = false;
         }
-        catch (Exception ex) {
-            appBehind.AppendError(ex.Message, ex);
-        }
-    }
 
-    private void Begin_Click(object sender, RoutedEventArgs e) {
-        try {
-            PerformBegin();
+        private void PerformRollback() {
+            qc.Rollback();
+            qc.Close();
+            beginButton.IsEnabled = true;
+            commitButton.IsEnabled = false;
+            rollbackButton.IsEnabled = false;
         }
-        catch (Exception ex) {
-            appBehind.AppendError(ex.Message, ex);
-        }
-    }
 
-    private void Commit_Click(object sender, RoutedEventArgs e) {
-        try {
-            PerformCommit();
+        private void Execute_Click(object sender, RoutedEventArgs e) {
+            try {
+                PerformExecute();
+            }
+            catch (Exception ex) {
+                appBehind.AppendError(ex.Message, ex);
+            }
         }
-        catch (Exception ex) {
-            appBehind.AppendError(ex.Message, ex);
-        }
-    }
 
-    private void Rollback_Click(object sender, RoutedEventArgs e) {
-        try {
-            PerformRollback();
+        private void Begin_Click(object sender, RoutedEventArgs e) {
+            try {
+                PerformBegin();
+            }
+            catch (Exception ex) {
+                appBehind.AppendError(ex.Message, ex);
+            }
         }
-        catch (Exception ex) {
-            appBehind.AppendError(ex.Message, ex);
+
+        private void Commit_Click(object sender, RoutedEventArgs e) {
+            try {
+                PerformCommit();
+            }
+            catch (Exception ex) {
+                appBehind.AppendError(ex.Message, ex);
+            }
+        }
+
+        private void Rollback_Click(object sender, RoutedEventArgs e) {
+            try {
+                PerformRollback();
+            }
+            catch (Exception ex) {
+                appBehind.AppendError(ex.Message, ex);
+            }
         }
     }
 }

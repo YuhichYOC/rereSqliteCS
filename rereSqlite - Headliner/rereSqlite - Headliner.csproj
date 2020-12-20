@@ -38,13 +38,7 @@
       <Page Update="Pages\StringStorage.xaml">
         <Generator></Generator>
       </Page>
-      <Page Update="Pages\StringCard.xaml">
-        <Generator></Generator>
-      </Page>
       <Page Update="Pages\BinaryStorage.xaml">
-        <Generator></Generator>
-      </Page>
-      <Page Update="Pages\BinaryCard.xaml">
         <Generator></Generator>
       </Page>
       <Page Update="Pages\RunningInformations.xaml">
@@ -80,14 +74,8 @@
       <Compile Update="Pages\StringStorage.xaml.cs">
         <DependentUpon>StringStorage.xaml</DependentUpon>
       </Compile>
-      <Compile Update="Pages\StringCard.xaml.cs">
-        <DependentUpon>StringCard.xaml</DependentUpon>
-      </Compile>
       <Compile Update="Pages\BinaryStorage.xaml.cs">
         <DependentUpon>BinaryStorage.xaml</DependentUpon>
-      </Compile>
-      <Compile Update="Pages\BinaryCard.xaml.cs">
-        <DependentUpon>BinaryCard.xaml</DependentUpon>
       </Compile>
       <Compile Update="Pages\RunningInformations.xaml.cs">
         <DependentUpon>RunningInformations.xaml</DependentUpon>

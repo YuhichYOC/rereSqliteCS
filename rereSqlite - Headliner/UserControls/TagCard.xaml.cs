@@ -1,6 +1,6 @@
 ﻿/*
 *
-* Clone.cs
+* TagCard.cs
 *
 * Copyright 2020 Yuichi Yoshii
 *     吉井雄一 @ 吉井産業  you.65535.kir@gmail.com
@@ -21,17 +21,16 @@
 
 using System;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
+using rereSqlite___Headliner.Data;
 
-namespace rereSqlite___Headliner.Pages {
-    public partial class Clone : Page {
+namespace rereSqlite___Headliner.UserControls {
+    public partial class TagCard {
         private AppBehind appBehind;
 
-        private string dataSourceTo;
-
-        public Clone() {
+        public TagCard() {
             InitializeComponent();
+            Prepare();
         }
 
         public AppBehind AppBehind {
@@ -42,32 +41,40 @@ namespace rereSqlite___Headliner.Pages {
             }
         }
 
-        private void PerformClone() {
-            if (null == dataSourceTo || @"".Equals(dataSourceTo)) return;
-            var cloner = new SqliteCloner {
-                DataSourceFrom = appBehind.DBFilePath, PasswordFrom = appBehind.Password, DataSourceTo = dataSourceTo,
-                PasswordTo = passwordInput.Text
-            };
-            cloner.Run();
+        public string NewTag { get; set; }
+
+        public string OldTag { get; set; }
+
+        private void Prepare() {
+            DataContext = this;
+            RegisterButton.IsEnabled = false;
         }
 
-        private void SelectFile_Click(object sender, RoutedEventArgs e) {
-            try {
-                var of = new OFWindow {AppBehind = appBehind};
-                of.CreateNewFile();
-                of.ShowDialog();
-                if (null == of.SelectedPath || @"".Equals(of.SelectedPath)) return;
-                filePathOutput.Content = of.SelectedPath;
-                dataSourceTo = of.SelectedPath;
-            }
-            catch (Exception ex) {
-                appBehind.AppendError(ex.Message, ex);
-            }
+        private void Insert() {
+            TagMaster.Register(true, appBehind, NewTag, OldTag);
+            RegisterButton.IsEnabled = false;
         }
 
-        private void Run_Click(object sender, RoutedEventArgs e) {
+        private void Update() {
+            TagMaster.Register(false, appBehind, NewTag, OldTag);
+            RegisterButton.IsEnabled = false;
+        }
+
+        private void PerformRegister() {
+            if (string.IsNullOrEmpty(OldTag))
+                Insert();
+            else
+                Update();
+        }
+
+        private void TagInput_Change(object sender, RoutedEventArgs e) {
+            NewTag = TagInput.Text;
+            RegisterButton.IsEnabled = !OldTag.Equals(NewTag);
+        }
+
+        private void Register_Click(object sender, RoutedEventArgs e) {
             try {
-                PerformClone();
+                PerformRegister();
             }
             catch (Exception ex) {
                 appBehind.AppendError(ex.Message, ex);

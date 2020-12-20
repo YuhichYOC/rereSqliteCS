@@ -23,30 +23,32 @@ using System;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-public partial class RunningInformations : Page {
-    private AppBehind appBehind;
+namespace rereSqlite___Headliner.Pages {
+    public partial class RunningInformations : Page {
+        private AppBehind appBehind;
 
-    public AppBehind AppBehind {
-        set {
-            appBehind = value;
-            FontFamily = new FontFamily(appBehind.FontFamily);
-            FontSize = appBehind.FontSize;
+        public RunningInformations() {
+            InitializeComponent();
         }
-    }
 
-    public RunningInformations() {
-        InitializeComponent();
-    }
+        public AppBehind AppBehind {
+            set {
+                appBehind = value;
+                FontFamily = new FontFamily(appBehind.FontFamily);
+                FontSize = appBehind.FontSize;
+            }
+        }
 
-    public void AppendInfo(string info, Exception ex) {
-        Append(null == ex ? info : info + '\n' + ex.Message + '\n' + ex.StackTrace);
-    }
+        public void AppendInfo(string info, Exception ex) {
+            Append(null == ex ? info : info + '\n' + ex.Message + '\n' + ex.StackTrace);
+        }
 
-    public void AppendInfo(string message) {
-        Append(message);
-    }
+        public void AppendInfo(string message) {
+            Append(message);
+        }
 
-    private void Append(string info) {
-        informations.Text = '\n' + DateTime.Now.ToString() + '\n' + info + '\n' + informations.Text;
+        private void Append(string info) {
+            informations.Text = '\n' + DateTime.Now.ToString() + '\n' + info + '\n' + informations.Text;
+        }
     }
 }

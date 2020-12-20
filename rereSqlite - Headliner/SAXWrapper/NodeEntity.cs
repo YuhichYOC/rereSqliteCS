@@ -23,9 +23,23 @@ using System.Collections.Generic;
 using System.Linq;
 
 public class NodeEntity {
+    private int newDepth;
     private int newNodeId;
 
-    private int newDepth;
+    public NodeEntity() {
+        NodeId = 0;
+        Depth = 0;
+        IsComment = false;
+        AttrList = new List<AttributeEntity>();
+        Parent = null;
+        Children = new List<NodeEntity>();
+        writerSetting = null;
+        indentSize = 2;
+        newLineAfterOpeningBracket = true;
+        newLineAfterClosingBracket = true;
+        newLineAfterAttributes = true;
+        newLineAfterNodeValue = true;
+    }
 
     public string NodeName { get; set; }
 
@@ -44,21 +58,6 @@ public class NodeEntity {
     public List<NodeEntity> Children { get; set; }
 
     public NodeEntity Root => null == Parent ? this : Parent.Root;
-
-    public NodeEntity() {
-        NodeId = 0;
-        Depth = 0;
-        IsComment = false;
-        AttrList = new List<AttributeEntity>();
-        Parent = null;
-        Children = new List<NodeEntity>();
-        writerSetting = null;
-        indentSize = 2;
-        newLineAfterOpeningBracket = true;
-        newLineAfterClosingBracket = true;
-        newLineAfterAttributes = true;
-        newLineAfterNodeValue = true;
-    }
 
     public void AddAttr(AttributeEntity arg) {
         AttrList.Add(arg);
