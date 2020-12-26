@@ -21,9 +21,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Media;
-using rereSqlite___Headliner.Data;
 using rereSqlite___Headliner.UserControls;
 
 namespace rereSqlite___Headliner.Pages {
@@ -48,37 +48,63 @@ namespace rereSqlite___Headliner.Pages {
         }
 
         public void FillTagInput() {
-            TagInput.Items.Add(new KeyValuePair<string, string>(@"", @""));
-            new Data.TagMaster().Query(appBehind).ForEach(row => {
-                TagInput.Items.Add(new KeyValuePair<string, string>(row[0].ToString(), row[0].ToString()));
-            });
+            TagInput.Items.Clear();
+            var add = new Data.TagMaster().Query(appBehind)
+                .Aggregate(
+                    new List<KeyValuePair<string, string>>(),
+                    (ret, row) => {
+                        ret.Add(new KeyValuePair<string, string>(row[0].ToString(), row[0].ToString()));
+                        return ret;
+                    });
+            add.Insert(0, new KeyValuePair<string, string>(@"", @""));
+            add.ForEach(item => { TagInput.Items.Add(item); });
         }
 
         private void PerformSelect() {
-            FillCardList(new Data.BinaryStorage().Query(appBehind, KeyInput.Text, TagInput.SelectedValue));
+            Fill();
         }
 
-        private void FillCardList(List<List<object>> rows) {
+        private void Fill() {
             CardList.Children.Clear();
+            var rows = new Data.BinaryStorage().Query(appBehind, KeyInput.Text, TagInput.SelectedValue);
+            var tagCandidates = new Data.TagMaster().Query(appBehind).Select(row => row[0]).ToList();
+            var margin = new Thickness(2);
             var keyHit = false;
-            rows.ForEach(row => {
-                AddCard(row[0].ToString(), row[1].ToString(), true, new Thickness(0, 2, 0, 0));
+            foreach (var row in rows.Where(row => null != row[0] && null != row[3] && (long) row[3] == (long) row[4])) {
+                AddChild(
+                    row[0].ToString(),
+                    row[1].ToString(),
+                    true,
+                    tagCandidates,
+                    rows.Where(r => row[0].ToString().Equals(r[0].ToString()))
+                        .Select(r => r[2])
+                        .ToList(),
+                    margin
+                );
                 if (KeyInput.Text.Equals(row[0].ToString())) keyHit = true;
-            });
-            if (keyHit) return;
-            if (string.IsNullOrEmpty(KeyInput.Text)) return;
-            AddCard(KeyInput.Text, @"", false, new Thickness(0, 2, 0, 0));
+            }
+
+            if (keyHit || string.IsNullOrEmpty(KeyInput.Text)) return;
+            AddChild(KeyInput.Text, @"", false, tagCandidates, new List<object>(), margin);
         }
 
-        private void AddCard(string key, string fileName, bool hasBinaryInDB, Thickness margin) {
-            CardList.Children.Add(new BinaryCard {
+        private void AddChild(
+            string key,
+            string fileName,
+            bool hasBinaryInDB,
+            List<object> tagCandidates,
+            List<object> tags,
+            Thickness margin
+        ) {
+            var add = new BinaryCard {
                 AppBehind = appBehind,
                 Key = key,
                 FileName = fileName,
                 HasBinaryInDb = hasBinaryInDB,
                 Margin = margin
-            });
-            ((BinaryCard) CardList.Children[^1]).FillTagInput(new BinaryTags().Query(appBehind, key));
+            };
+            add.FillTagInput(tagCandidates, tags);
+            CardList.Children.Add(add);
         }
 
         private void Search_Click(object sender, RoutedEventArgs e) {

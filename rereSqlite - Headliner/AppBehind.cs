@@ -41,6 +41,7 @@ public class AppBehind {
         FontSize = double.Parse(r.Node.Find(@"SettingDef").Find(@"Window").Find(@"FontSize").NodeValue);
         DataGridRowHeightPlus =
             double.Parse(r.Node.Find(@"SettingDef").Find(@"DataGrid").Find(@"RowHeightPlus").NodeValue);
+        RunInitialize = @"Yes".Equals(r.Node.Find(@"SettingDef").Find(@"Initialize").NodeValue);
     }
 
     public int WindowHeight { get; }
@@ -52,6 +53,8 @@ public class AppBehind {
     public double FontSize { get; }
 
     public double DataGridRowHeightPlus { get; }
+
+    public bool RunInitialize { get; set; }
 
     public string DBFilePath { get; set; }
 

@@ -32,7 +32,7 @@ namespace rereSqlite___Headliner.Data {
 
         public List<List<object>> Query(AppBehind appBehind, string key, object tag) {
             return null == tag || string.IsNullOrEmpty(tag.ToString())
-                ? base.Query(appBehind, QuerySelectWithKey, new Dictionary<string, string> {{@"@key", key}})
+                ? base.Query(appBehind, QuerySelect, new Dictionary<string, string> {{@"@key", key}})
                 : Query(appBehind, new Dictionary<string, string> {{@"@key", key}, {@"@tag", tag.ToString()}});
         }
 
@@ -93,7 +93,7 @@ namespace rereSqlite___Headliner.Data {
         }
 
         protected override string GetQuerySelect() {
-            return QuerySelect;
+            return QuerySelectWithTag;
         }
 
         #region -- Query Strings --
@@ -121,26 +121,31 @@ namespace rereSqlite___Headliner.Data {
             @"       )                                                                        " +
             @"     )                                                                          ";
 
+        private const string QuerySelectWithTag =
+            QuerySelect +
+            @" AND T.TAG            = @tag                                                    ";
+
         private const string QuerySelect =
             @" SELECT                                                                         " +
             @"     S.KEY,                                                                     " +
-            @"     S.FILE_NAME                                                                " +
+            @"     S.FILE_NAME,                                                               " +
+            @"     T.TAG,                                                                     " +
+            @"     ROW_NUMBER() OVER (                                                        " +
+            @"       PARTITION BY                                                             " +
+            @"         S.KEY                                                                  " +
+            @"       ORDER BY                                                                 " +
+            @"         T.TAG                                                                  " +
+            @"     )                AS NUMBER_KEY,                                            " +
+            @"     COUNT(S.KEY) OVER (                                                        " +
+            @"       PARTITION BY                                                             " +
+            @"         S.KEY                                                                  " +
+            @"     )                AS TOTAL_KEY                                              " +
             @" FROM                                                                           " +
             @"     BINARY_STORAGE   S                                                         " +
             @" LEFT OUTER JOIN                                                                " +
             @"     BINARY_TAGS      T                                                         " +
             @" ON                                                                             " +
             @"     S.KEY            = T.KEY                                                   " +
-            @" WHERE                                                                          " +
-            @"     S.KEY            LIKE @key || '%'                                          " +
-            @" AND T.TAG            = @tag                                                    ";
-
-        private const string QuerySelectWithKey =
-            @" SELECT                                                                         " +
-            @"     S.KEY,                                                                     " +
-            @"     S.FILE_NAME                                                                " +
-            @" FROM                                                                           " +
-            @"     BINARY_STORAGE   S                                                         " +
             @" WHERE                                                                          " +
             @"     S.KEY            LIKE @key || '%'                                          ";
 

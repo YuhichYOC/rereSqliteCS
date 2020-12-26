@@ -40,6 +40,7 @@ namespace rereSqlite___Headliner.UserControls {
                 FontFamily = new FontFamily(appBehind.FontFamily);
                 FontSize = appBehind.FontSize;
                 TagInputList.AppBehind = appBehind;
+                TagInputList.TagChanged += TagChanged;
             }
         }
 
@@ -54,20 +55,28 @@ namespace rereSqlite___Headliner.UserControls {
             RegisterButton.IsEnabled = false;
         }
 
-        public void FillTagInput(List<List<object>> tags) {
-            TagInputList.SetCandidates(new TagMaster().Query(appBehind));
+        public void FillTagInput(List<object> candidates, List<object> tags) {
+            TagInputList.SetCandidates(candidates);
             TagInputList.SetTags(tags);
+        }
+
+        private bool AnyValueChanged() {
+            if (string.IsNullOrEmpty(Value)) return false;
+            return !OriginalValue.Equals(Value) || TagInputList.AnyTagChanged();
         }
 
         private void Insert() {
             StringStorage.Register(true, appBehind, Key, Value, TagInputList.GetTags());
-            RegisterButton.IsEnabled = false;
+            OriginalValue = Value;
+            TagInputList.Refresh();
+            RegisterButton.IsEnabled = AnyValueChanged();
         }
 
         private void Update() {
             StringStorage.Register(false, appBehind, Key, Value, TagInputList.GetTags());
             OriginalValue = Value;
-            RegisterButton.IsEnabled = false;
+            TagInputList.Refresh();
+            RegisterButton.IsEnabled = AnyValueChanged();
         }
 
         private void PerformRegister() {
@@ -77,9 +86,13 @@ namespace rereSqlite___Headliner.UserControls {
                 Update();
         }
 
+        private void TagChanged() {
+            RegisterButton.IsEnabled = AnyValueChanged();
+        }
+
         private void ValueInput_Change(object sender, RoutedEventArgs e) {
             Value = ValueInput.Text;
-            RegisterButton.IsEnabled = !OriginalValue.Equals(Value);
+            RegisterButton.IsEnabled = AnyValueChanged();
         }
 
         private void Register_Click(object sender, RoutedEventArgs e) {

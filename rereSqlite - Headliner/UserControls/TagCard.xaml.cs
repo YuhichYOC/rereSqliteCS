@@ -45,6 +45,12 @@ namespace rereSqlite___Headliner.UserControls {
 
         public string OldTag { get; set; }
 
+        private bool ValueChanged() {
+            if (string.IsNullOrEmpty(NewTag)) return false;
+            if (string.IsNullOrEmpty(OldTag)) return true;
+            return !OldTag.Equals(NewTag);
+        }
+
         private void Prepare() {
             DataContext = this;
             RegisterButton.IsEnabled = false;
@@ -52,12 +58,14 @@ namespace rereSqlite___Headliner.UserControls {
 
         private void Insert() {
             TagMaster.Register(true, appBehind, NewTag, OldTag);
-            RegisterButton.IsEnabled = false;
+            OldTag = NewTag;
+            RegisterButton.IsEnabled = ValueChanged();
         }
 
         private void Update() {
             TagMaster.Register(false, appBehind, NewTag, OldTag);
-            RegisterButton.IsEnabled = false;
+            OldTag = NewTag;
+            RegisterButton.IsEnabled = ValueChanged();
         }
 
         private void PerformRegister() {
@@ -65,11 +73,12 @@ namespace rereSqlite___Headliner.UserControls {
                 Insert();
             else
                 Update();
+            appBehind.Reload();
         }
 
         private void TagInput_Change(object sender, RoutedEventArgs e) {
             NewTag = TagInput.Text;
-            RegisterButton.IsEnabled = !OldTag.Equals(NewTag);
+            RegisterButton.IsEnabled = ValueChanged();
         }
 
         private void Register_Click(object sender, RoutedEventArgs e) {

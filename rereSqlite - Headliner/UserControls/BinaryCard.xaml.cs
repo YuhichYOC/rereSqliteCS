@@ -45,6 +45,7 @@ namespace rereSqlite___Headliner.UserControls {
                 FontFamily = new FontFamily(appBehind.FontFamily);
                 FontSize = appBehind.FontSize;
                 TagInputList.AppBehind = appBehind;
+                TagInputList.TagChanged += TagChanged;
             }
         }
 
@@ -68,9 +69,14 @@ namespace rereSqlite___Headliner.UserControls {
             RegisterButton.IsEnabled = false;
         }
 
-        public void FillTagInput(List<List<object>> tags) {
-            TagInputList.SetCandidates(new TagMaster().Query(appBehind));
+        public void FillTagInput(List<object> candidates, List<object> tags) {
+            TagInputList.SetCandidates(candidates);
             TagInputList.SetTags(tags);
+        }
+
+        private bool AnyValueChanged() {
+            if (!string.IsNullOrEmpty(fileFullPath)) return true;
+            return hasBinaryInDB && TagInputList.AnyTagChanged();
         }
 
         private void PerformSelectFile() {
@@ -80,7 +86,7 @@ namespace rereSqlite___Headliner.UserControls {
             fileFullPath = of.SelectedPath;
             FileName = Path.GetFileName(fileFullPath);
             FileNameOutput.Content = FileName;
-            RegisterButton.IsEnabled = true;
+            RegisterButton.IsEnabled = AnyValueChanged();
         }
 
         private void PerformRetrieveFile() {
@@ -95,12 +101,15 @@ namespace rereSqlite___Headliner.UserControls {
         private void InsertFile() {
             BinaryStorage.Register(true, appBehind, Key, fileFullPath, FileName, TagInputList.GetTags());
             HasBinaryInDb = true;
-            RegisterButton.IsEnabled = false;
+            TagInputList.Refresh();
+            RegisterButton.IsEnabled = AnyValueChanged();
         }
 
         private void UpdateFile() {
             BinaryStorage.Register(false, appBehind, Key, fileFullPath, FileName, TagInputList.GetTags());
-            RegisterButton.IsEnabled = false;
+            HasBinaryInDb = true;
+            TagInputList.Refresh();
+            RegisterButton.IsEnabled = AnyValueChanged();
         }
 
         private void PerformRegister() {
@@ -108,6 +117,10 @@ namespace rereSqlite___Headliner.UserControls {
                 UpdateFile();
             else
                 InsertFile();
+        }
+
+        private void TagChanged() {
+            RegisterButton.IsEnabled = AnyValueChanged();
         }
 
         private void SelectFile_Click(object sender, RoutedEventArgs e) {

@@ -26,6 +26,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using rereSqlite___Headliner.Data;
 
 namespace rereSqlite___Headliner.Pages {
     public partial class TableList : Page {
@@ -63,23 +64,9 @@ namespace rereSqlite___Headliner.Pages {
         }
 
         private List<List<object>> QueryTables() {
-            var accessor = new SqliteAccessor
-                {DataSource = appBehind.DBFilePath, Password = appBehind.Password};
-            accessor.Open();
-            if (@"".Equals(filterInput.Text.Trim())) {
-                accessor.QueryString = @" SELECT NAME FROM sqlite_master WHERE TYPE = 'table' ORDER BY NAME ";
-                accessor.Execute(accessor.CreateCommand());
-            }
-            else {
-                accessor.QueryString =
-                    @" SELECT NAME FROM sqlite_master WHERE TYPE = 'table' AND NAME LIKE '%' || @filter || '%' ORDER BY NAME ";
-                var com = accessor.CreateCommand();
-                com.Parameters.AddWithValue(@"@filter", filterInput.Text);
-                accessor.Execute(com);
-            }
-
-            accessor.Close();
-            return accessor.QueryResult;
+            return string.IsNullOrEmpty(filterInput.Text.Trim())
+                ? new Schema().Query(appBehind)
+                : new Schema().Query(appBehind, filterInput.Text.Trim());
         }
 
         private void FillTableList(List<List<object>> queryResult) {
@@ -94,16 +81,11 @@ namespace rereSqlite___Headliner.Pages {
         }
 
         private void PerformQueryWholeTable(string tableName) {
-            if (@"".Equals(tableName)) return;
-            var accessor = new SqliteAccessor {
-                DataSource = appBehind.DBFilePath, Password = appBehind.Password,
-                QueryString = @" PRAGMA table_info('" + tableName + "') "
-            };
-            accessor.Open();
-            accessor.Execute(accessor.CreateCommand());
-            if (0 == accessor.QueryResult.Count) return;
+            if (string.IsNullOrEmpty(tableName)) return;
+            var tableInfo = new Schema().QueryTableInfo(appBehind, tableName);
+            if (0 == tableInfo.Count) return;
             var query = @" SELECT " + '\n';
-            query += accessor.QueryResult
+            query += tableInfo
                 .Select((row, index) => new {index, columnName = row[1]})
                 .Aggregate(@"",
                     (ret, item) =>
@@ -113,7 +95,12 @@ namespace rereSqlite___Headliner.Pages {
 
             query += @" FROM " + '\n';
             query += @"     " + tableName + @" " + '\n';
-            accessor.QueryString = query;
+            var accessor = new SqliteAccessor {
+                DataSource = appBehind.DBFilePath,
+                Password = appBehind.Password,
+                QueryString = query
+            };
+            accessor.Open();
             accessor.Execute(accessor.CreateCommand());
             accessor.Close();
             appBehind.SetQueryString(query);

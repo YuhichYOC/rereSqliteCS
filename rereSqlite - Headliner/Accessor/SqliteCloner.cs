@@ -25,6 +25,8 @@ using System.Linq;
 using Microsoft.Data.Sqlite;
 
 public class SqliteCloner {
+    #region -- Query Strings --
+
     private const string QuerySelectSqliteMaster =
         @" SELECT               " +
         @"     NAME,            " +
@@ -35,6 +37,8 @@ public class SqliteCloner {
         @"     TYPE   = 'table' " +
         @" ORDER BY             " +
         @"     NAME             ";
+
+    #endregion
 
     private SqliteAccessor accessorFrom;
 
@@ -146,20 +150,21 @@ public class SqliteCloner {
         }
 
         public string SelectQuery() {
-            return @" SELECT "
-                   + ColumnInfos.Aggregate(@"", (ret, item) => ret + item.SelectColumnName())
-                   + @", rowid FROM "
-                   + TableName;
+            return @" SELECT " +
+                   ColumnInfos.Aggregate(@"", (ret, item) => ret + item.SelectColumnName()) +
+                   @", rowid FROM " +
+                   TableName;
         }
 
         public string InsertQuery() {
-            var query = @" INSERT INTO "
-                        + TableName
-                        + @" ( "
-                        + ColumnInfos.Aggregate(@"", (ret, item) => ret + item.InsertColumnName())
-                        + @" ) VALUES ( "
-                        + ColumnInfos.Aggregate(@"", (ret, item) => ret + item.InsertColumnValue())
-                        + @" ) ";
+            var query = @" INSERT " +
+                        @" INTO " +
+                        TableName +
+                        @" ( " +
+                        ColumnInfos.Aggregate(@"", (ret, item) => ret + item.InsertColumnName()) +
+                        @" ) VALUES ( " +
+                        ColumnInfos.Aggregate(@"", (ret, item) => ret + item.InsertColumnValue()) +
+                        @" ) ";
             if (HasBlob) query += @"; SELECT last_insert_rowid(); ";
 
             return query;

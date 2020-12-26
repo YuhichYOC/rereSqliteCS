@@ -21,16 +21,21 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
 namespace rereSqlite___Headliner.UserControls {
     public partial class TagInputList : UserControl {
+        public delegate void TagChangeDelegate();
+
         private const int MaxTagCount = 5;
 
         private AppBehind appBehind;
 
-        private List<List<object>> candidates;
+        private List<object> candidates;
+
+        private List<string> originalValues;
 
         public TagInputList() {
             InitializeComponent();
@@ -40,14 +45,29 @@ namespace rereSqlite___Headliner.UserControls {
             set => appBehind = value;
         }
 
-        public void SetCandidates(List<List<object>> arg) {
+        public TagChangeDelegate TagChanged { get; set; }
+
+        public void SetCandidates(List<object> arg) {
             candidates = arg;
         }
 
-        public void SetTags(List<List<object>> arg) {
+        public void SetTags(List<object> arg) {
             if (MaxTagCount < arg.Count) throw new ArgumentException(@"There are too many tags.");
-            arg.ForEach(row => { AddChild(row[0].ToString()); });
-            if (0 == Tags.Children.Count) AddChild(@"");
+            originalValues = new List<string>();
+            arg.ForEach(t => {
+                if (null == t || DBNull.Value == t) return;
+                originalValues.Add(t.ToString());
+                AddChild(t.ToString());
+            });
+            originalValues.Sort();
+            if (MaxTagCount > arg.Count) AddChild(@"");
+        }
+
+        public bool AnyTagChanged() {
+            var now = GetTags();
+            if (originalValues.Count != now.Count) return true;
+            now.Sort();
+            return originalValues.Where((t, i) => !t.Equals(now[i])).Any();
         }
 
         public List<object> GetTags() {
@@ -58,6 +78,11 @@ namespace rereSqlite___Headliner.UserControls {
             }
 
             return ret;
+        }
+
+        public void Refresh() {
+            originalValues.Clear();
+            GetTags().ForEach(t => originalValues.Add(t.ToString()));
         }
 
         private void RemoveDuplicate() {
@@ -77,9 +102,7 @@ namespace rereSqlite___Headliner.UserControls {
             if (MaxTagCount <= Tags.Children.Count) return;
             var add = new ComboBox();
             add.Items.Add(new KeyValuePair<string, string>(@"", @""));
-            candidates.ForEach(c => {
-                add.Items.Add(new KeyValuePair<string, string>(c[0].ToString(), c[0].ToString()));
-            });
+            candidates.ForEach(c => { add.Items.Add(new KeyValuePair<string, string>(c.ToString(), c.ToString())); });
             add.DisplayMemberPath = @"Value";
             add.SelectedValuePath = @"Key";
             add.SelectedValue = initialValue;
@@ -100,6 +123,7 @@ namespace rereSqlite___Headliner.UserControls {
                 RemoveDuplicate();
                 RemoveBlank();
                 AddChild(@"");
+                TagChanged?.Invoke();
             }
             catch (Exception ex) {
                 appBehind.AppendError(ex.Message, ex);

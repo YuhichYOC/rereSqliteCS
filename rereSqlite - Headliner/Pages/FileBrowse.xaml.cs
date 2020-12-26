@@ -54,7 +54,7 @@ namespace rereSqlite___Headliner.Pages {
                 appBehind.DBFilePath = of.SelectedPath;
                 filePathOutput.Content = appBehind.DBFilePath;
                 appBehind.Password = passwordInput.Text;
-                new DataBaseInitializer {AppBehind = appBehind}.Run();
+                if (appBehind.RunInitialize) new DataBaseInitializer {AppBehind = appBehind}.Run();
                 appBehind.Reload();
             }
             catch (Exception ex) {
@@ -71,11 +71,6 @@ namespace rereSqlite___Headliner.Pages {
                 appBehind.DBFilePath = of.SelectedPath;
                 filePathOutput.Content = appBehind.DBFilePath;
                 appBehind.Password = passwordInput.Text;
-                var accessor = @"".Equals(appBehind.Password)
-                    ? new SqliteAccessor {DataSource = appBehind.DBFilePath}
-                    : new SqliteAccessor {DataSource = appBehind.DBFilePath, Password = appBehind.Password};
-                accessor.Open();
-                accessor.Close();
                 new DataBaseInitializer {AppBehind = appBehind}.Run();
                 appBehind.Reload();
             }
