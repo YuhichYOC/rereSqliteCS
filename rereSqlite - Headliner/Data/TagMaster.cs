@@ -23,25 +23,25 @@ using System.Collections.Generic;
 
 namespace rereSqlite___Headliner.Data {
     public class TagMaster : DaoCommon {
-        public void SetUp(AppBehind appBehind) {
-            if (TableExists(appBehind)) return;
-            CreateTable(appBehind);
+        public void SetUp() {
+            if (TableExists()) return;
+            CreateTable();
         }
 
-        public List<List<object>> Query(AppBehind appBehind) {
+        public List<List<object>> Query() {
             var parameters = new Dictionary<string, string>();
-            return Query(appBehind, parameters);
+            return Query(parameters);
         }
 
-        public List<List<object>> Query(AppBehind appBehind, string tag) {
+        public List<List<object>> Query(string tag) {
             var parameters = new Dictionary<string, string> {{@"@tag", tag}};
-            return Query(appBehind, QuerySelectWithCondition, parameters);
+            return Query(QuerySelectWithCondition, parameters);
         }
 
-        public static void Register(bool insert, AppBehind appBehind, string newTag, string oldTag) {
+        public static void Register(bool insert, string newTag, string oldTag) {
             using var accessor = new SqliteAccessor {
-                DataSource = appBehind.DBFilePath,
-                Password = appBehind.Password,
+                DataSource = AppBehind.Get.DBFilePath,
+                Password = AppBehind.Get.Password,
                 QueryString = insert ? QueryInsert : QueryUpdate
             };
             accessor.Open();

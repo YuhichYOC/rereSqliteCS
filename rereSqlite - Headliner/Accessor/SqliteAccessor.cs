@@ -100,6 +100,8 @@ public class SqliteAccessor : IDisposable {
     }
 
     public void Execute(SqliteCommand command) {
+        QueryResultAttributes = new List<Tuple<string, string>>();
+        QueryResult = new List<List<object>>();
         using var reader = command.ExecuteReader();
         if (!reader.HasRows) return;
         QueryResultAttributes = FetchResultAttributes(reader);

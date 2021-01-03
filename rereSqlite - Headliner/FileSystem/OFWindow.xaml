@@ -38,7 +38,8 @@
                     <ComboBox
                         Grid.Row="0"
                         Margin="2"
-                        x:Name="Drives" />
+                        x:Name="Drives"
+                        SelectionChanged="Drives_Change" />
                     <TreeView
                         Grid.Row="1"
                         Margin="2"
@@ -50,8 +51,8 @@
                 <DataGrid
                     Grid.Column="1"
                     Margin="2"
-                    RowHeight="{Binding RowHeight}"
-                    x:Name="FileList">
+                    x:Name="FileList"
+                    SelectedCellsChanged="FileList_Select">
                     <DataGrid.CellStyle>
                         <Style TargetType="DataGridCell">
                             <Setter Property="VerticalAlignment" Value="Stretch" />
@@ -69,7 +70,7 @@
             <Grid
                 Grid.Row="1">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="5*" />
+                    <ColumnDefinition Width="3*" />
                     <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
                 <Grid
@@ -86,9 +87,8 @@
                 <Button
                     Grid.Column="1"
                     Margin="2"
-                    x:Name="OpenButton">
-                    開く
-                </Button>
+                    x:Name="OpenButton"
+                    Click="OpenButton_Click" />
             </Grid>
         </Grid>
         <StatusBar Grid.Row="2" />

@@ -28,30 +28,33 @@ using rereSqlite___Headliner.Data;
 
 namespace rereSqlite___Headliner.UserControls {
     public partial class BinaryCard {
-        private AppBehind appBehind;
-
         private string fileFullPath;
+
+        private string fileNameString;
 
         private bool hasBinaryInDB;
 
+        private string keyString;
+
         public BinaryCard() {
             InitializeComponent();
-            Prepare();
         }
 
-        public AppBehind AppBehind {
+        public string Key {
+            get => keyString;
             set {
-                appBehind = value;
-                FontFamily = new FontFamily(appBehind.FontFamily);
-                FontSize = appBehind.FontSize;
-                TagInputList.AppBehind = appBehind;
-                TagInputList.TagChanged += TagChanged;
+                keyString = value;
+                KeyOutput.Content = keyString;
             }
         }
 
-        public string Key { get; set; }
-
-        public string FileName { get; set; }
+        public string FileName {
+            get => fileNameString;
+            set {
+                fileNameString = value;
+                FileNameOutput.Content = fileNameString;
+            }
+        }
 
         public bool HasBinaryInDb {
             get => hasBinaryInDB;
@@ -61,11 +64,13 @@ namespace rereSqlite___Headliner.UserControls {
             }
         }
 
-        private void Prepare() {
-            DataContext = this;
+        public void Init() {
+            FontFamily = new FontFamily(AppBehind.Get.FontFamily);
+            FontSize = AppBehind.Get.FontSize;
+            TagInputList.TagChanged += TagChanged;
             fileFullPath = @"";
             SelectFileButton.IsEnabled = true;
-            RetrieveFileButton.IsEnabled = false;
+            RetrieveFileButton.IsEnabled = hasBinaryInDB;
             RegisterButton.IsEnabled = false;
         }
 
@@ -80,7 +85,17 @@ namespace rereSqlite___Headliner.UserControls {
         }
 
         private void PerformSelectFile() {
-            var of = new OFWindow {AppBehind = appBehind};
+            var of = new OFWindow(false) {
+                AppendErrorDelegate = AppBehind.Get.AppendError,
+                RowHeightPlus = AppBehind.Get.DataGridRowHeightPlus,
+                OpenButtonCaption = AppBehind.Get.OFWindowCaptions.SelectPathButton,
+                NewFileButtonCaption = AppBehind.Get.OFWindowCaptions.SelectPathButton,
+                FileNameColumnCaption = AppBehind.Get.OFWindowCaptions.FileNameColumn,
+                OverwriteDialogTitle = AppBehind.Get.OFWindowCaptions.OverwriteDialogTitle,
+                OverwriteMessage = AppBehind.Get.OFWindowCaptions.OverwriteMessage,
+                Title = AppBehind.Get.OFWindowCaptions.SelectFileTitle
+            };
+            of.Init();
             of.ShowDialog();
             if (null == of.SelectedPath || @"".Equals(of.SelectedPath)) return;
             fileFullPath = of.SelectedPath;
@@ -90,23 +105,32 @@ namespace rereSqlite___Headliner.UserControls {
         }
 
         private void PerformRetrieveFile() {
-            var of = new OFWindow {AppBehind = appBehind};
-            of.CreateNewFile();
+            var of = new OFWindow(true) {
+                AppendErrorDelegate = AppBehind.Get.AppendError,
+                RowHeightPlus = AppBehind.Get.DataGridRowHeightPlus,
+                OpenButtonCaption = AppBehind.Get.OFWindowCaptions.SaveFileButton,
+                NewFileButtonCaption = AppBehind.Get.OFWindowCaptions.SaveFileButton,
+                FileNameColumnCaption = AppBehind.Get.OFWindowCaptions.FileNameColumn,
+                OverwriteDialogTitle = AppBehind.Get.OFWindowCaptions.OverwriteDialogTitle,
+                OverwriteMessage = AppBehind.Get.OFWindowCaptions.OverwriteMessage,
+                Title = AppBehind.Get.OFWindowCaptions.RetrieveFileTitle
+            };
+            of.Init();
             of.ShowDialog();
             if (null == of.SelectedPath || @"".Equals(of.SelectedPath)) return;
             using var outputStream = new FileStream(of.SelectedPath, FileMode.Create, FileAccess.Write);
-            BinaryStorage.Retrieve(appBehind, Key, outputStream);
+            BinaryStorage.Retrieve(Key, outputStream);
         }
 
         private void InsertFile() {
-            BinaryStorage.Register(true, appBehind, Key, fileFullPath, FileName, TagInputList.GetTags());
+            BinaryStorage.Register(true, Key, fileFullPath, FileName, TagInputList.GetTags());
             HasBinaryInDb = true;
             TagInputList.Refresh();
             RegisterButton.IsEnabled = AnyValueChanged();
         }
 
         private void UpdateFile() {
-            BinaryStorage.Register(false, appBehind, Key, fileFullPath, FileName, TagInputList.GetTags());
+            BinaryStorage.Register(false, Key, fileFullPath, FileName, TagInputList.GetTags());
             HasBinaryInDb = true;
             TagInputList.Refresh();
             RegisterButton.IsEnabled = AnyValueChanged();
@@ -123,12 +147,14 @@ namespace rereSqlite___Headliner.UserControls {
             RegisterButton.IsEnabled = AnyValueChanged();
         }
 
+        #region -- Event Handlers --
+
         private void SelectFile_Click(object sender, RoutedEventArgs e) {
             try {
                 PerformSelectFile();
             }
             catch (Exception ex) {
-                appBehind.AppendError(ex.Message, ex);
+                AppBehind.Get.AppendError(ex.Message, ex);
             }
         }
 
@@ -137,7 +163,7 @@ namespace rereSqlite___Headliner.UserControls {
                 PerformRetrieveFile();
             }
             catch (Exception ex) {
-                appBehind.AppendError(ex.Message, ex);
+                AppBehind.Get.AppendError(ex.Message, ex);
             }
         }
 
@@ -146,8 +172,10 @@ namespace rereSqlite___Headliner.UserControls {
                 PerformRegister();
             }
             catch (Exception ex) {
-                appBehind.AppendError(ex.Message, ex);
+                AppBehind.Get.AppendError(ex.Message, ex);
             }
         }
+
+        #endregion
     }
 }

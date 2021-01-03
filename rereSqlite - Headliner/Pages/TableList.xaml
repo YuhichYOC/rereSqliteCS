@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:rereSqlite___Headliner"
     mc:Ignorable="d"
     Title="TableList">
     <Grid>
@@ -21,20 +22,18 @@
                 Grid.Column="0"
                 VerticalAlignment="Stretch"
                 VerticalContentAlignment="Center"
-                x:Name="filterInput"
+                x:Name="FilterInput"
                 TextChanged="Reload_AnyEvent" />
             <Button
                 Grid.Column="1"
                 Margin="2, 0, 0, 0"
-                Click="Reload_AnyEvent">
-                リロード
-            </Button>
+                Content="{Binding Source={x:Static local:AppBehind.Get}, Path=TableListCaptions.ReloadButton}"
+                Click="Reload_AnyEvent" />
         </Grid>
         <DataGrid
             Grid.Row="1"
             Margin="0, 2, 0, 0"
-            RowHeight="{Binding RowHeight}"
-            x:Name="tableList"
+            x:Name="Tables"
             MouseDoubleClick="TableList_DoubleClick">
             <DataGrid.CellStyle>
                 <Style TargetType="DataGridCell">

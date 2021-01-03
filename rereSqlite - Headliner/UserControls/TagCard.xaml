@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:rereSqlite___Headliner"
     mc:Ignorable="d">
     <Border BorderBrush="Black" BorderThickness="1">
         <Grid>
@@ -19,25 +20,22 @@
                 </Grid.ColumnDefinitions>
                 <Label
                     Grid.Column="0"
-                    Margin="2">
-                    タグ
-                </Label>
+                    Margin="2"
+                    Content="{Binding Source={x:Static local:AppBehind.Get}, Path=TagCardCaptions.TagInput}" />
                 <TextBox
                     Grid.Column="1"
                     Margin="2"
                     VerticalAlignment="Stretch"
                     VerticalContentAlignment="Center"
                     x:Name="TagInput"
-                    TextChanged="TagInput_Change"
-                    Text="{Binding NewTag}" />
+                    TextChanged="TagInput_Change" />
             </Grid>
             <Button
                 Grid.Row="1"
                 Margin="2"
+                Content="{Binding Source={x:Static local:AppBehind.Get}, Path=TagCardCaptions.RegisterButton}"
                 x:Name="RegisterButton"
-                Click="Register_Click">
-                登録
-            </Button>
+                Click="Register_Click" />
         </Grid>
     </Border>
 </UserControl>

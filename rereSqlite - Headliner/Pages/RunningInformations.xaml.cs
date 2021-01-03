@@ -20,23 +20,17 @@
 */
 
 using System;
-using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace rereSqlite___Headliner.Pages {
-    public partial class RunningInformations : Page {
-        private AppBehind appBehind;
-
+    public partial class RunningInformations {
         public RunningInformations() {
             InitializeComponent();
         }
 
-        public AppBehind AppBehind {
-            set {
-                appBehind = value;
-                FontFamily = new FontFamily(appBehind.FontFamily);
-                FontSize = appBehind.FontSize;
-            }
+        public void Init() {
+            FontFamily = new FontFamily(AppBehind.Get.FontFamily);
+            FontSize = AppBehind.Get.FontSize;
         }
 
         public void AppendInfo(string info, Exception ex) {
@@ -48,7 +42,7 @@ namespace rereSqlite___Headliner.Pages {
         }
 
         private void Append(string info) {
-            informations.Text = '\n' + DateTime.Now.ToString() + '\n' + info + '\n' + informations.Text;
+            Informations.Text = '\n' + DateTime.Now.ToString() + '\n' + info + '\n' + Informations.Text;
         }
     }
 }

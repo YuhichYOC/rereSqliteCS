@@ -19,35 +19,22 @@
 *
 */
 
-using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace rereSqlite___Headliner.Pages {
-    public partial class QueryResultView : Page {
-        private AppBehind appBehind;
-
+    public partial class QueryResultView {
         private Operator dataGridOperator;
 
         public QueryResultView() {
             InitializeComponent();
-            Prepare();
         }
 
-        public AppBehind AppBehind {
-            set {
-                appBehind = value;
-                FontFamily = new FontFamily(appBehind.FontFamily);
-                FontSize = appBehind.FontSize;
-                RowHeight = appBehind.FontSize + appBehind.DataGridRowHeightPlus;
-            }
-        }
-
-        public double RowHeight { get; set; }
-
-        private void Prepare() {
+        public void Init() {
+            FontFamily = new FontFamily(AppBehind.Get.FontFamily);
+            FontSize = AppBehind.Get.FontSize;
+            DataGrid.RowHeight = AppBehind.Get.FontSize + AppBehind.Get.DataGridRowHeightPlus;
             dataGridOperator = new Operator();
-            dataGridOperator.Prepare(ownGrid);
-            DataContext = this;
+            dataGridOperator.Prepare(DataGrid);
         }
 
         public void Show(SqliteAccessor accessor) {

@@ -40,11 +40,15 @@ public class SqliteCloner {
 
     #endregion
 
+    private readonly List<TableInfo> tables;
+
     private SqliteAccessor accessorFrom;
 
     private SqliteAccessor accessorTo;
 
-    private List<TableInfo> tables;
+    public SqliteCloner() {
+        tables = new List<TableInfo>();
+    }
 
     public string DataSourceFrom { get; set; }
 
@@ -53,6 +57,10 @@ public class SqliteCloner {
     public string DataSourceTo { get; set; }
 
     public string PasswordTo { get; set; }
+
+    public void AddPriorTable(string name) {
+        tables.Add(new TableInfo {TableName = name});
+    }
 
     public void Run() {
         accessorFrom = new SqliteAccessor {DataSource = DataSourceFrom, Password = PasswordFrom};
@@ -72,11 +80,21 @@ public class SqliteCloner {
     }
 
     private void FetchTables() {
-        tables = new List<TableInfo>();
         accessorFrom.QueryString = QuerySelectSqliteMaster;
         accessorFrom.Execute(accessorFrom.CreateCommand());
         var queryResult = accessorFrom.QueryResult;
         queryResult.ForEach(row => {
+            var tableInfo = tables.Find(t => row[0].ToString().Equals(t.TableName));
+            if (null == tableInfo) return;
+            tableInfo.Sql = row[1].ToString();
+            accessorFrom.QueryString = @" PRAGMA table_info ('" + tableInfo.TableName + @"') ";
+            accessorFrom.Execute(accessorFrom.CreateCommand());
+            for (var i = 0; accessorFrom.QueryResult.Count > i; ++i)
+                tableInfo.AddColumn(i, accessorFrom.QueryResult[i][1].ToString(),
+                    accessorFrom.QueryResult[i][2].ToString());
+        });
+        queryResult.ForEach(row => {
+            if (tables.Exists(t => row[0].ToString().Equals(t.TableName))) return;
             var add = new TableInfo {TableName = row[0].ToString(), Sql = row[1].ToString()};
             accessorFrom.QueryString = @" PRAGMA table_info ('" + add.TableName + @"') ";
             accessorFrom.Execute(accessorFrom.CreateCommand());

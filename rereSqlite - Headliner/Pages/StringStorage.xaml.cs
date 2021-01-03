@@ -28,28 +28,18 @@ using rereSqlite___Headliner.UserControls;
 
 namespace rereSqlite___Headliner.Pages {
     public partial class StringStorage {
-        private AppBehind appBehind;
-
         public StringStorage() {
             InitializeComponent();
-            Prepare();
         }
 
-        public AppBehind AppBehind {
-            set {
-                appBehind = value;
-                FontFamily = new FontFamily(appBehind.FontFamily);
-                FontSize = appBehind.FontSize;
-            }
-        }
-
-        private void Prepare() {
-            DataContext = appBehind;
+        public void Init() {
+            FontFamily = new FontFamily(AppBehind.Get.FontFamily);
+            FontSize = AppBehind.Get.FontSize;
         }
 
         public void FillTagInput() {
             TagInput.Items.Clear();
-            var add = new Data.TagMaster().Query(appBehind)
+            var add = new Data.TagMaster().Query()
                 .Aggregate(
                     new List<KeyValuePair<string, string>>(),
                     (ret, row) => {
@@ -60,14 +50,10 @@ namespace rereSqlite___Headliner.Pages {
             add.ForEach(item => { TagInput.Items.Add(item); });
         }
 
-        private void PerformSelect() {
-            Fill();
-        }
-
         private void Fill() {
             CardList.Children.Clear();
-            var rows = new Data.StringStorage().Query(appBehind, KeyInput.Text, TagInput.SelectedValue);
-            var tagCandidates = new Data.TagMaster().Query(appBehind).Select(row => row[0]).ToList();
+            var rows = new Data.StringStorage().Query(KeyInput.Text, TagInput.SelectedValue);
+            var tagCandidates = new Data.TagMaster().Query().Select(row => row[0]).ToList();
             var margin = new Thickness(2);
             var keyHit = false;
             foreach (var row in rows.Where(row => null != row[0] && null != row[3] && (long) row[3] == (long) row[4])) {
@@ -97,23 +83,27 @@ namespace rereSqlite___Headliner.Pages {
             Thickness margin
         ) {
             var add = new StringCard {
-                AppBehind = appBehind,
                 Key = key,
                 Value = value,
                 OriginalValue = originalValue,
                 Margin = margin
             };
+            add.Init();
             add.FillTagInput(tagCandidates, tags);
             CardList.Children.Add(add);
         }
 
+        #region -- Event Handlers --
+
         private void Search_Click(object sender, RoutedEventArgs e) {
             try {
-                PerformSelect();
+                Fill();
             }
             catch (Exception ex) {
-                appBehind.AppendError(ex.Message, ex);
+                AppBehind.Get.AppendError(ex.Message, ex);
             }
         }
+
+        #endregion
     }
 }

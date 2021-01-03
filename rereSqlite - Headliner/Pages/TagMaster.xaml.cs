@@ -27,51 +27,46 @@ using rereSqlite___Headliner.UserControls;
 
 namespace rereSqlite___Headliner.Pages {
     public partial class TagMaster {
-        private AppBehind appBehind;
-
         public TagMaster() {
             InitializeComponent();
-            Prepare();
         }
 
-        public AppBehind AppBehind {
-            set {
-                appBehind = value;
-                FontFamily = new FontFamily(appBehind.FontFamily);
-                FontSize = appBehind.FontSize;
-            }
-        }
-
-        private void Prepare() {
-            DataContext = appBehind;
+        public void Init() {
+            FontFamily = new FontFamily(AppBehind.Get.FontFamily);
+            FontSize = AppBehind.Get.FontSize;
         }
 
         private void PerformSelect() {
-            FillCardList(new Data.TagMaster().Query(appBehind, TagInput.Text));
+            FillCardList(new Data.TagMaster().Query(TagInput.Text));
         }
 
         private void FillCardList(List<List<object>> rows) {
             CardList.Children.Clear();
-            rows.ForEach(row => { AddCard(row[0].ToString(), row[0].ToString(), new Thickness(0, 2, 0, 0)); });
-            AddCard(@"", @"", new Thickness(0, 2, 0, 0));
+            rows.ForEach(row => { AddChild(row[0].ToString(), row[0].ToString(), new Thickness(0, 2, 0, 0)); });
+            AddChild(@"", @"", new Thickness(0, 2, 0, 0));
         }
 
-        private void AddCard(string newTag, string oldTag, Thickness margin) {
-            CardList.Children.Add(new TagCard {
-                AppBehind = appBehind,
+        private void AddChild(string newTag, string oldTag, Thickness margin) {
+            var add = new TagCard {
                 NewTag = newTag,
                 OldTag = oldTag,
                 Margin = margin
-            });
+            };
+            add.Init();
+            CardList.Children.Add(add);
         }
+
+        #region -- Event Handlers --
 
         private void Search_Click(object sender, RoutedEventArgs e) {
             try {
                 PerformSelect();
             }
             catch (Exception ex) {
-                appBehind.AppendError(ex.Message, ex);
+                AppBehind.Get.AppendError(ex.Message, ex);
             }
         }
+
+        #endregion
     }
 }

@@ -4,7 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:rereSqlite___Headliner.UserControls"
+    xmlns:local="clr-namespace:rereSqlite___Headliner"
+    xmlns:userControl="clr-namespace:rereSqlite___Headliner.UserControls"
     mc:Ignorable="d">
     <Border BorderBrush="Black" BorderThickness="1">
         <Grid>
@@ -22,49 +23,45 @@
                 Grid.Column="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="8*" />
+                    <ColumnDefinition Width="4*" />
                 </Grid.ColumnDefinitions>
                 <Label
                     Grid.Column="0"
-                    Margin="2">
-                    キー
-                </Label>
+                    Margin="2"
+                    Content="{Binding Source={x:Static local:AppBehind.Get}, Path=BinaryCardCaptions.Key}" />
                 <Label
                     Grid.Column="1"
                     Margin="2"
-                    Content="{Binding Key}" />
+                    x:Name="KeyOutput" />
             </Grid>
             <Grid
                 Grid.Row="1"
                 Grid.Column="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="8*" />
+                    <ColumnDefinition Width="4*" />
                 </Grid.ColumnDefinitions>
                 <Label
                     Grid.Column="0"
-                    Margin="2">
-                    ファイル名
-                </Label>
+                    Margin="2"
+                    Content="{Binding Source={x:Static local:AppBehind.Get}, Path=BinaryCardCaptions.FileNameOutput}" />
                 <Label
                     Grid.Column="1"
                     Margin="2"
-                    x:Name="FileNameOutput"
-                    Content="{Binding FileName}" />
+                    x:Name="FileNameOutput" />
             </Grid>
             <Grid
                 Grid.Row="2"
                 Grid.Column="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="8*" />
+                    <ColumnDefinition Width="4*" />
                 </Grid.ColumnDefinitions>
                 <Label
                     Grid.Column="0"
-                    Margin="2">
-                    タグ
-                </Label>
-                <local:TagInputList
+                    Margin="2"
+                    Content="{Binding Source={x:Static local:AppBehind.Get}, Path=BinaryCardCaptions.TagInputList}" />
+                <userControl:TagInputList
                     Grid.Column="1"
                     x:Name="TagInputList" />
             </Grid>
@@ -72,26 +69,23 @@
                 Grid.Row="0"
                 Grid.Column="1"
                 Margin="2"
+                Content="{Binding Source={x:Static local:AppBehind.Get}, Path=BinaryCardCaptions.RetrieveFileButton}"
                 x:Name="RetrieveFileButton"
-                Click="RetrieveFile_Click">
-                ファイルの展開
-            </Button>
+                Click="RetrieveFile_Click" />
             <Button
                 Grid.Row="1"
                 Grid.Column="1"
                 Margin="2"
+                Content="{Binding Source={x:Static local:AppBehind.Get}, Path=BinaryCardCaptions.SelectFileButton}"
                 x:Name="SelectFileButton"
-                Click="SelectFile_Click">
-                ファイル選択
-            </Button>
+                Click="SelectFile_Click" />
             <Button
                 Grid.Row="2"
                 Grid.Column="1"
                 Margin="2"
+                Content="{Binding Source={x:Static local:AppBehind.Get}, Path=BinaryCardCaptions.RegisterButton}"
                 x:Name="RegisterButton"
-                Click="Register_Click">
-                登録
-            </Button>
+                Click="Register_Click" />
         </Grid>
     </Border>
 </UserControl>

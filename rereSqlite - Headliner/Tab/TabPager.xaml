@@ -34,7 +34,7 @@
             <Button
                 Grid.Column="1"
                 Margin="2"
-                IsEnabled="{Binding EnableRemovePage}"
+                x:Name="RemovePageButton"
                 Click="RemovePage_Click">
                 x
             </Button>

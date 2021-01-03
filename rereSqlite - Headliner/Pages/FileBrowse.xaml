@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:rereSqlite___Headliner"
     mc:Ignorable="d"
     Title="FileBrowse">
     <Grid>
@@ -25,15 +26,14 @@
         <Label
             Grid.Row="0"
             Grid.Column="1"
-            VerticalAlignment="Center">
-            パスワード
-        </Label>
+            VerticalAlignment="Center"
+            Content="{Binding Source={x:Static local:AppBehind.Get}, Path=FileBrowseCaptions.PasswordInput}" />
         <TextBox
             Grid.Row="1"
             Grid.Column="1"
             VerticalAlignment="Stretch"
             VerticalContentAlignment="Center"
-            x:Name="passwordInput" />
+            x:Name="PasswordInput" />
         <Grid
             Grid.Row="3"
             Grid.Column="1">
@@ -44,25 +44,22 @@
             </Grid.ColumnDefinitions>
             <Button
                 Grid.Column="0"
-                Click="Browse_Click">
-                ファイルを開く
-            </Button>
+                Content="{Binding Source={x:Static local:AppBehind.Get}, Path=FileBrowseCaptions.BrowseButton}"
+                Click="Browse_Click" />
             <Button
                 Grid.Column="2"
-                Click="NewFile_Click">
-                新規作成
-            </Button>
+                Content="{Binding Source={x:Static local:AppBehind.Get}, Path=FileBrowseCaptions.NewFileButton}"
+                Click="NewFile_Click" />
         </Grid>
         <Label
             Grid.Row="5"
             Grid.Column="1"
-            VerticalAlignment="Center">
-            開いているファイル
-        </Label>
+            VerticalAlignment="Center"
+            Content="{Binding Source={x:Static local:AppBehind.Get}, Path=FileBrowseCaptions.FilePathOutput}" />
         <Label
             Grid.Row="6"
             Grid.Column="1"
             VerticalAlignment="Center"
-            x:Name="filePathOutput" />
+            x:Name="FilePathOutput" />
     </Grid>
 </Page>

@@ -8,8 +8,7 @@
     Title="QueryResultView">
     <Grid>
         <DataGrid
-            RowHeight="{Binding RowHeight}"
-            x:Name="ownGrid">
+            x:Name="DataGrid">
             <DataGrid.CellStyle>
                 <Style TargetType="DataGridCell">
                     <Setter Property="VerticalAlignment" Value="Stretch" />

@@ -23,18 +23,13 @@ using rereSqlite___Headliner.Data;
 
 namespace rereSqlite___Headliner.Setup {
     public class DataBaseInitializer {
-        private AppBehind appBehind;
-
-        public AppBehind AppBehind {
-            set => appBehind = value;
-        }
-
-        public void Run() {
-            new TagMaster().SetUp(appBehind);
-            new BinaryStorage().SetUp(appBehind);
-            new StringStorage().SetUp(appBehind);
-            new BinaryTags().SetUp(appBehind);
-            new StringTags().SetUp(appBehind);
+        public static void Run() {
+            if (!AppBehind.Get.RunInitialize) return;
+            new TagMaster().SetUp();
+            new BinaryStorage().SetUp();
+            new StringStorage().SetUp();
+            new BinaryTags().SetUp();
+            new StringTags().SetUp();
         }
     }
 }

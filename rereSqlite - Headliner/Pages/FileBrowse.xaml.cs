@@ -21,62 +21,74 @@
 
 using System;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
 using rereSqlite___Headliner.Setup;
 
 namespace rereSqlite___Headliner.Pages {
-    public partial class FileBrowse : Page {
-        private AppBehind appBehind;
-
+    public partial class FileBrowse {
         public FileBrowse() {
             InitializeComponent();
-            Prepare();
         }
 
-        public AppBehind AppBehind {
-            set {
-                appBehind = value;
-                FontFamily = new FontFamily(appBehind.FontFamily);
-                FontSize = appBehind.FontSize;
-            }
+        public void Init() {
+            FontFamily = new FontFamily(AppBehind.Get.FontFamily);
+            FontSize = AppBehind.Get.FontSize;
         }
 
-        private void Prepare() {
-            DataContext = appBehind;
-        }
+        #region -- Event Handlers --
 
         private void Browse_Click(object sender, RoutedEventArgs e) {
             try {
-                var of = new OFWindow {AppBehind = appBehind};
+                var of = new OFWindow(false) {
+                    AppendErrorDelegate = AppBehind.Get.AppendError,
+                    RowHeightPlus = AppBehind.Get.DataGridRowHeightPlus,
+                    OpenButtonCaption = AppBehind.Get.OFWindowCaptions.OpenDatabaseButton,
+                    NewFileButtonCaption = AppBehind.Get.OFWindowCaptions.NewDatabaseButton,
+                    FileNameColumnCaption = AppBehind.Get.OFWindowCaptions.FileNameColumn,
+                    OverwriteDialogTitle = AppBehind.Get.OFWindowCaptions.OverwriteDialogTitle,
+                    OverwriteMessage = AppBehind.Get.OFWindowCaptions.OverwriteMessage,
+                    Title = AppBehind.Get.OFWindowCaptions.OpenDatabaseTitle
+                };
+                of.Init();
                 of.ShowDialog();
                 if (null == of.SelectedPath || @"".Equals(of.SelectedPath)) return;
-                appBehind.DBFilePath = of.SelectedPath;
-                filePathOutput.Content = appBehind.DBFilePath;
-                appBehind.Password = passwordInput.Text;
-                if (appBehind.RunInitialize) new DataBaseInitializer {AppBehind = appBehind}.Run();
-                appBehind.Reload();
+                AppBehind.Get.DBFilePath = of.SelectedPath;
+                FilePathOutput.Content = AppBehind.Get.DBFilePath;
+                AppBehind.Get.Password = PasswordInput.Text;
+                DataBaseInitializer.Run();
+                AppBehind.Get.Reload();
             }
             catch (Exception ex) {
-                appBehind.AppendError(ex.Message, ex);
+                AppBehind.Get.AppendError(ex.Message, ex);
             }
         }
 
         private void NewFile_Click(object sender, RoutedEventArgs e) {
             try {
-                var of = new OFWindow {AppBehind = appBehind};
-                of.CreateNewFile();
+                var of = new OFWindow(true) {
+                    AppendErrorDelegate = AppBehind.Get.AppendError,
+                    RowHeightPlus = AppBehind.Get.DataGridRowHeightPlus,
+                    OpenButtonCaption = AppBehind.Get.OFWindowCaptions.OpenDatabaseButton,
+                    NewFileButtonCaption = AppBehind.Get.OFWindowCaptions.NewDatabaseButton,
+                    FileNameColumnCaption = AppBehind.Get.OFWindowCaptions.FileNameColumn,
+                    OverwriteDialogTitle = AppBehind.Get.OFWindowCaptions.OverwriteDialogTitle,
+                    OverwriteMessage = AppBehind.Get.OFWindowCaptions.OverwriteMessage,
+                    Title = AppBehind.Get.OFWindowCaptions.NewDatabaseTitle
+                };
+                of.Init();
                 of.ShowDialog();
                 if (null == of.SelectedPath || @"".Equals(of.SelectedPath)) return;
-                appBehind.DBFilePath = of.SelectedPath;
-                filePathOutput.Content = appBehind.DBFilePath;
-                appBehind.Password = passwordInput.Text;
-                new DataBaseInitializer {AppBehind = appBehind}.Run();
-                appBehind.Reload();
+                AppBehind.Get.DBFilePath = of.SelectedPath;
+                FilePathOutput.Content = AppBehind.Get.DBFilePath;
+                AppBehind.Get.Password = PasswordInput.Text;
+                DataBaseInitializer.Run();
+                AppBehind.Get.Reload();
             }
             catch (Exception ex) {
-                appBehind.AppendError(ex.Message, ex);
+                AppBehind.Get.AppendError(ex.Message, ex);
             }
         }
+
+        #endregion
     }
 }

@@ -21,47 +21,55 @@
 
 using System;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace rereSqlite___Headliner.Pages {
-    public partial class Clone : Page {
-        private AppBehind appBehind;
-
+    public partial class Clone {
         private string dataSourceTo;
 
         public Clone() {
             InitializeComponent();
         }
 
-        public AppBehind AppBehind {
-            set {
-                appBehind = value;
-                FontFamily = new FontFamily(appBehind.FontFamily);
-                FontSize = appBehind.FontSize;
-            }
+        public void Init() {
+            FontFamily = new FontFamily(AppBehind.Get.FontFamily);
+            FontSize = AppBehind.Get.FontSize;
         }
 
         private void PerformClone() {
             if (null == dataSourceTo || @"".Equals(dataSourceTo)) return;
             var cloner = new SqliteCloner {
-                DataSourceFrom = appBehind.DBFilePath, PasswordFrom = appBehind.Password, DataSourceTo = dataSourceTo,
-                PasswordTo = passwordInput.Text
+                DataSourceFrom = AppBehind.Get.DBFilePath,
+                PasswordFrom = AppBehind.Get.Password,
+                DataSourceTo = dataSourceTo,
+                PasswordTo = PasswordInput.Text
             };
+            AppBehind.Get.ClonePriorTables.ForEach(t => cloner.AddPriorTable(t));
             cloner.Run();
         }
 
+        #region -- Event Handlers --
+
         private void SelectFile_Click(object sender, RoutedEventArgs e) {
             try {
-                var of = new OFWindow {AppBehind = appBehind};
-                of.CreateNewFile();
+                var of = new OFWindow(true) {
+                    AppendErrorDelegate = AppBehind.Get.AppendError,
+                    RowHeightPlus = AppBehind.Get.DataGridRowHeightPlus,
+                    OpenButtonCaption = AppBehind.Get.OFWindowCaptions.OpenDatabaseButton,
+                    NewFileButtonCaption = AppBehind.Get.OFWindowCaptions.NewDatabaseButton,
+                    FileNameColumnCaption = AppBehind.Get.OFWindowCaptions.FileNameColumn,
+                    OverwriteDialogTitle = AppBehind.Get.OFWindowCaptions.OverwriteDialogTitle,
+                    OverwriteMessage = AppBehind.Get.OFWindowCaptions.OverwriteMessage,
+                    Title = AppBehind.Get.OFWindowCaptions.CloneDatabaseTitle
+                };
+                of.Init();
                 of.ShowDialog();
                 if (null == of.SelectedPath || @"".Equals(of.SelectedPath)) return;
-                filePathOutput.Content = of.SelectedPath;
+                FilePathOutput.Content = of.SelectedPath;
                 dataSourceTo = of.SelectedPath;
             }
             catch (Exception ex) {
-                appBehind.AppendError(ex.Message, ex);
+                AppBehind.Get.AppendError(ex.Message, ex);
             }
         }
 
@@ -70,8 +78,10 @@ namespace rereSqlite___Headliner.Pages {
                 PerformClone();
             }
             catch (Exception ex) {
-                appBehind.AppendError(ex.Message, ex);
+                AppBehind.Get.AppendError(ex.Message, ex);
             }
         }
+
+        #endregion
     }
 }

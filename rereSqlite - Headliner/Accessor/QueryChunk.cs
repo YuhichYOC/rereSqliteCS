@@ -26,15 +26,12 @@ namespace rereSqlite___Headliner.Accessor {
     public class QueryChunk {
         private readonly SqliteAccessor accessor;
 
-        private readonly AppBehind appBehind;
-
         private List<SqliteCommand> commands;
 
         private SqliteTransaction transaction;
 
-        public QueryChunk(AppBehind a) {
-            appBehind = a;
-            accessor = new SqliteAccessor {DataSource = appBehind.DBFilePath, Password = appBehind.Password};
+        public QueryChunk() {
+            accessor = new SqliteAccessor {DataSource = AppBehind.Get.DBFilePath, Password = AppBehind.Get.Password};
         }
 
         public bool TransactionAlreadyBegun => accessor.TransactionAlreadyBegun;
@@ -69,7 +66,7 @@ namespace rereSqlite___Headliner.Accessor {
             if (TransactionAlreadyBegun) command.Transaction = transaction;
             accessor.Execute(command);
             if (0 < accessor.QueryResult.Count)
-                appBehind.AddPage(accessor);
+                AppBehind.Get.AddPage(accessor);
         }
 
         public void Commit() {

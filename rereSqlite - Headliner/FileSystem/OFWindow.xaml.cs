@@ -25,63 +25,46 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 
 public partial class OFWindow {
-    private AppBehind appBehind;
-
-    private bool createNewFile;
-
     private FileSystemTreeEx driveTreeOperator;
 
-    public OFWindow() {
+    public OFWindow(bool createNewFile) {
         InitializeComponent();
-        Prepare();
+        CreateNewFile = createNewFile;
     }
 
-    public AppBehind AppBehind {
-        set {
-            appBehind = value;
-            FontFamily = new FontFamily(appBehind.FontFamily);
-            FontSize = appBehind.FontSize;
-        }
-    }
+    public Action<string, Exception> AppendErrorDelegate { get; set; }
+
+    public double RowHeightPlus { get; set; }
+
+    public string OpenButtonCaption { get; set; }
+
+    public string NewFileButtonCaption { get; set; }
+
+    public string FileNameColumnCaption { get; set; }
+
+    public string OverwriteDialogTitle { get; set; }
+
+    public string OverwriteMessage { get; set; }
+
+    public bool CreateNewFile { get; }
 
     public string SelectedPath { get; private set; }
 
-    private void Prepare() {
-        createNewFile = false;
-        FillDriveLetters();
-        PrepareDriveTree(PrepareFileList());
-        OpenButton.Click += OpenButton_Click;
-        DataContext = this;
-    }
-
-    private void FillDriveLetters() {
+    public void Init() {
         Drives.ItemsSource = Directory.GetLogicalDrives().ToList();
-        Drives.SelectionChanged += Drives_Change;
-    }
-
-    private OperatorEx PrepareFileList() {
         var fileListOperator = new OperatorEx();
         fileListOperator.Prepare(FileList);
-        fileListOperator.AddColumn(@"FileName", @"ファイル名");
+        fileListOperator.AddColumn(@"FileName", FileNameColumnCaption);
         fileListOperator.CreateColumns();
-        FileList.SelectedCellsChanged += FileList_Select;
-        return fileListOperator;
-    }
-
-    private void PrepareDriveTree(OperatorEx gridOperator) {
-        driveTreeOperator = new FileSystemTreeEx {AppBehind = appBehind};
+        FileList.RowHeight = FontSize + RowHeightPlus;
+        driveTreeOperator = new FileSystemTreeEx {AppendErrorDelegate = AppendErrorDelegate};
         driveTreeOperator.Prepare(DriveTree);
-        driveTreeOperator.GridOperator = gridOperator;
+        driveTreeOperator.GridOperator = fileListOperator;
         driveTreeOperator.FileFullPathInput = FileFullPathInput;
-        driveTreeOperator.CreateNewFile = createNewFile;
-    }
-
-    public void CreateNewFile() {
-        createNewFile = true;
-        driveTreeOperator.CreateNewFile = true;
+        driveTreeOperator.CreateNewFile = CreateNewFile;
+        OpenButton.Content = CreateNewFile ? NewFileButtonCaption : OpenButtonCaption;
     }
 
     private void SwitchDrive() {
@@ -93,7 +76,7 @@ public partial class OFWindow {
             SwitchDrive();
         }
         catch (Exception ex) {
-            appBehind.AppendError(ex.Message, ex);
+            AppendErrorDelegate?.Invoke(ex.Message, ex);
         }
     }
 
@@ -104,19 +87,19 @@ public partial class OFWindow {
                 FileFullPathInput.Text = selectedFile as string ?? @"";
         }
         catch (Exception ex) {
-            appBehind.AppendError(ex.Message, ex);
+            AppendErrorDelegate?.Invoke(ex.Message, ex);
         }
     }
 
     private void OpenButton_Click(object sender, RoutedEventArgs e) {
         try {
-            if (createNewFile && File.Exists(FileFullPathInput.Text) && MessageBoxResult.No ==
-                MessageBox.Show(this, @"既に存在するファイルです。上書きしますか？", @"上書き確認", MessageBoxButton.YesNo)) return;
+            if (CreateNewFile && File.Exists(FileFullPathInput.Text) && MessageBoxResult.No ==
+                MessageBox.Show(this, OverwriteMessage, OverwriteDialogTitle, MessageBoxButton.YesNo)) return;
             SelectedPath = FileFullPathInput.Text;
             Close();
         }
         catch (Exception ex) {
-            appBehind.AppendError(ex.Message, ex);
+            AppendErrorDelegate?.Invoke(ex.Message, ex);
         }
     }
 
@@ -141,11 +124,7 @@ public partial class OFWindow {
     }
 
     private class FileSystemTreeEx : FileSystemTree {
-        private AppBehind appBehind;
-
-        public AppBehind AppBehind {
-            set => appBehind = value;
-        }
+        public Action<string, Exception> AppendErrorDelegate { get; set; }
 
         public OperatorEx GridOperator { private get; set; }
 
@@ -166,7 +145,7 @@ public partial class OFWindow {
                 if (CreateNewFile) FileFullPathInput.Text = item.FullPath;
             }
             catch (Exception ex) {
-                appBehind.AppendError(ex.Message, ex);
+                AppendErrorDelegate?.Invoke(ex.Message, ex);
             }
         }
     }

@@ -24,16 +24,16 @@ using System.Collections.Generic;
 
 namespace rereSqlite___Headliner.Data {
     public class Schema : DaoCommon {
-        public List<List<object>> Query(AppBehind appBehind) {
-            return Query(appBehind, new Dictionary<string, string>());
+        public List<List<object>> Query() {
+            return Query(new Dictionary<string, string>());
         }
 
-        public List<List<object>> Query(AppBehind appBehind, string filter) {
-            return Query(appBehind, QuerySelectTable, new Dictionary<string, string> {{@"@filter", filter}});
+        public List<List<object>> Query(string filter) {
+            return Query(QuerySelectTable, new Dictionary<string, string> {{@"@filter", filter}});
         }
 
-        public List<List<object>> QueryTableInfo(AppBehind appBehind, string tableName) {
-            return Query(appBehind, @" PRAGMA table_info ('" + tableName + @"') ", new Dictionary<string, string>());
+        public List<List<object>> QueryTableInfo(string tableName) {
+            return Query(@" PRAGMA table_info ('" + tableName + @"') ", new Dictionary<string, string>());
         }
 
         protected override string GetQuerySelect() {

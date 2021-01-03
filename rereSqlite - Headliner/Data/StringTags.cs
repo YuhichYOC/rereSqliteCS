@@ -23,20 +23,16 @@ using System.Collections.Generic;
 
 namespace rereSqlite___Headliner.Data {
     public class StringTags : DaoCommon {
-        public void SetUp(AppBehind appBehind) {
-            if (TableExists(appBehind)) return;
-            CreateTable(appBehind);
+        public void SetUp() {
+            if (TableExists()) return;
+            CreateTable();
         }
 
-        public List<List<object>> Query(AppBehind appBehind, string key) {
-            return base.Query(appBehind, new Dictionary<string, string> {{@"@key", key}});
+        public List<List<object>> Query(string key) {
+            return Query(new Dictionary<string, string> {{@"@key", key}});
         }
 
-        public static void Register(
-            SqliteAccessor accessor,
-            string key,
-            List<object> tags
-        ) {
+        public static void Register(SqliteAccessor accessor, string key, List<object> tags) {
             accessor.QueryString = QueryDelete;
             var command = accessor.CreateCommand();
             command.Parameters.AddWithValue(@"@key", key);

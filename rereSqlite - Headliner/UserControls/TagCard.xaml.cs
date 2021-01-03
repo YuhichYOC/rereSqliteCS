@@ -26,22 +26,19 @@ using rereSqlite___Headliner.Data;
 
 namespace rereSqlite___Headliner.UserControls {
     public partial class TagCard {
-        private AppBehind appBehind;
+        private string newTag;
 
         public TagCard() {
             InitializeComponent();
-            Prepare();
         }
 
-        public AppBehind AppBehind {
+        public string NewTag {
+            get => newTag;
             set {
-                appBehind = value;
-                FontFamily = new FontFamily(appBehind.FontFamily);
-                FontSize = appBehind.FontSize;
+                newTag = value;
+                TagInput.Text = newTag;
             }
         }
-
-        public string NewTag { get; set; }
 
         public string OldTag { get; set; }
 
@@ -51,19 +48,20 @@ namespace rereSqlite___Headliner.UserControls {
             return !OldTag.Equals(NewTag);
         }
 
-        private void Prepare() {
-            DataContext = this;
+        public void Init() {
+            FontFamily = new FontFamily(AppBehind.Get.FontFamily);
+            FontSize = AppBehind.Get.FontSize;
             RegisterButton.IsEnabled = false;
         }
 
         private void Insert() {
-            TagMaster.Register(true, appBehind, NewTag, OldTag);
+            TagMaster.Register(true, NewTag, OldTag);
             OldTag = NewTag;
             RegisterButton.IsEnabled = ValueChanged();
         }
 
         private void Update() {
-            TagMaster.Register(false, appBehind, NewTag, OldTag);
+            TagMaster.Register(false, NewTag, OldTag);
             OldTag = NewTag;
             RegisterButton.IsEnabled = ValueChanged();
         }
@@ -73,8 +71,10 @@ namespace rereSqlite___Headliner.UserControls {
                 Insert();
             else
                 Update();
-            appBehind.Reload();
+            AppBehind.Get.Reload();
         }
+
+        #region -- Event Handlers --
 
         private void TagInput_Change(object sender, RoutedEventArgs e) {
             NewTag = TagInput.Text;
@@ -86,8 +86,10 @@ namespace rereSqlite___Headliner.UserControls {
                 PerformRegister();
             }
             catch (Exception ex) {
-                appBehind.AppendError(ex.Message, ex);
+                AppBehind.Get.AppendError(ex.Message, ex);
             }
         }
+
+        #endregion
     }
 }

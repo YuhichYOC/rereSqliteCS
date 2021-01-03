@@ -24,27 +24,26 @@ using System.Collections.Generic;
 
 namespace rereSqlite___Headliner.Data {
     public class StringStorage : DaoCommon {
-        public void SetUp(AppBehind appBehind) {
-            if (TableExists(appBehind)) return;
-            CreateTable(appBehind);
+        public void SetUp() {
+            if (TableExists()) return;
+            CreateTable();
         }
 
-        public List<List<object>> Query(AppBehind appBehind, string key, object tag) {
+        public List<List<object>> Query(string key, object tag) {
             return null == tag || string.IsNullOrEmpty(tag.ToString())
-                ? base.Query(appBehind, QuerySelect, new Dictionary<string, string> {{@"@key", key}})
-                : Query(appBehind, new Dictionary<string, string> {{@"@key", key}, {@"@tag", tag.ToString()}});
+                ? base.Query(QuerySelect, new Dictionary<string, string> {{@"@key", key}})
+                : base.Query(new Dictionary<string, string> {{@"@key", key}, {@"@tag", tag.ToString()}});
         }
 
         public static void Register(
             bool insert,
-            AppBehind appBehind,
             string key,
             string value,
             List<object> tags
         ) {
             using var accessor = new SqliteAccessor {
-                DataSource = appBehind.DBFilePath,
-                Password = appBehind.Password,
+                DataSource = AppBehind.Get.DBFilePath,
+                Password = AppBehind.Get.Password,
                 QueryString = insert ? QueryInsert : QueryUpdate
             };
             accessor.Open();

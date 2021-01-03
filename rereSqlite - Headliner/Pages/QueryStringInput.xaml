@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:rereSqlite___Headliner"
     mc:Ignorable="d"
     Title="QueryStringInput">
     <Grid>
@@ -16,7 +17,7 @@
             TextWrapping="Wrap"
             AcceptsReturn="True"
             VerticalScrollBarVisibility="Visible"
-            x:Name="queryInput" />
+            x:Name="QueryInput" />
         <Grid
             Grid.Row="1"
             Margin="0, 2, 0, 0">
@@ -31,28 +32,24 @@
             </Grid.ColumnDefinitions>
             <Button
                 Grid.Column="0"
-                x:Name="executeButton"
-                Click="Execute_Click">
-                実行
-            </Button>
+                Content="{Binding Source={x:Static local:AppBehind.Get}, Path=QueryStringInputCaptions.ExecuteButton}"
+                x:Name="ExecuteButton"
+                Click="Execute_Click" />
             <Button
                 Grid.Column="2"
-                x:Name="beginButton"
-                Click="Begin_Click">
-                トランザクション開始
-            </Button>
+                Content="{Binding Source={x:Static local:AppBehind.Get}, Path=QueryStringInputCaptions.BeginButton}"
+                x:Name="BeginButton"
+                Click="Begin_Click" />
             <Button
                 Grid.Column="4"
-                x:Name="commitButton"
-                Click="Commit_Click">
-                コミット
-            </Button>
+                Content="{Binding Source={x:Static local:AppBehind.Get}, Path=QueryStringInputCaptions.CommitButton}"
+                x:Name="CommitButton"
+                Click="Commit_Click" />
             <Button
                 Grid.Column="6"
-                x:Name="rollbackButton"
-                Click="Rollback_Click">
-                ロールバック
-            </Button>
+                Content="{Binding Source={x:Static local:AppBehind.Get}, Path=QueryStringInputCaptions.RollbackButton}"
+                x:Name="RollbackButton"
+                Click="Rollback_Click" />
         </Grid>
     </Grid>
 </Page>

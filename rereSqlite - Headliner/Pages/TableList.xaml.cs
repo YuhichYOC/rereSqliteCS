@@ -29,44 +29,32 @@ using System.Windows.Media;
 using rereSqlite___Headliner.Data;
 
 namespace rereSqlite___Headliner.Pages {
-    public partial class TableList : Page {
-        private AppBehind appBehind;
-
+    public partial class TableList {
         private Operator tableListOperator;
 
         public TableList() {
             InitializeComponent();
-            Prepare();
         }
 
-        public AppBehind AppBehind {
-            set {
-                appBehind = value;
-                FontFamily = new FontFamily(appBehind.FontFamily);
-                FontSize = appBehind.FontSize;
-                RowHeight = appBehind.FontSize + appBehind.DataGridRowHeightPlus;
-            }
-        }
-
-        public double RowHeight { get; set; }
-
-        private void Prepare() {
+        public void Init() {
+            FontFamily = new FontFamily(AppBehind.Get.FontFamily);
+            FontSize = AppBehind.Get.FontSize;
             tableListOperator = new Operator();
-            tableListOperator.Prepare(tableList);
-            tableListOperator.AddColumn(@"TableName", @"テーブル");
+            tableListOperator.Prepare(Tables);
+            tableListOperator.AddColumn(@"TableName", AppBehind.Get.TableListCaptions.TableNameColumn);
             tableListOperator.CreateColumns();
-            DataContext = this;
+            Tables.RowHeight = AppBehind.Get.FontSize + AppBehind.Get.DataGridRowHeightPlus;
         }
 
         public void FillTableList() {
-            if (@"".Equals(appBehind.DBFilePath)) return;
+            if (@"".Equals(AppBehind.Get.DBFilePath)) return;
             FillTableList(QueryTables());
         }
 
         private List<List<object>> QueryTables() {
-            return string.IsNullOrEmpty(filterInput.Text.Trim())
-                ? new Schema().Query(appBehind)
-                : new Schema().Query(appBehind, filterInput.Text.Trim());
+            return string.IsNullOrEmpty(FilterInput.Text.Trim())
+                ? new Schema().Query()
+                : new Schema().Query(FilterInput.Text.Trim());
         }
 
         private void FillTableList(List<List<object>> queryResult) {
@@ -82,7 +70,7 @@ namespace rereSqlite___Headliner.Pages {
 
         private void PerformQueryWholeTable(string tableName) {
             if (string.IsNullOrEmpty(tableName)) return;
-            var tableInfo = new Schema().QueryTableInfo(appBehind, tableName);
+            var tableInfo = new Schema().QueryTableInfo(tableName);
             if (0 == tableInfo.Count) return;
             var query = @" SELECT " + '\n';
             query += tableInfo
@@ -96,23 +84,25 @@ namespace rereSqlite___Headliner.Pages {
             query += @" FROM " + '\n';
             query += @"     " + tableName + @" " + '\n';
             var accessor = new SqliteAccessor {
-                DataSource = appBehind.DBFilePath,
-                Password = appBehind.Password,
+                DataSource = AppBehind.Get.DBFilePath,
+                Password = AppBehind.Get.Password,
                 QueryString = query
             };
             accessor.Open();
             accessor.Execute(accessor.CreateCommand());
             accessor.Close();
-            appBehind.SetQueryString(query);
-            appBehind.AddPage(accessor);
+            AppBehind.Get.SetQueryString(query);
+            AppBehind.Get.AddPage(accessor);
         }
+
+        #region -- Event Handlers --
 
         private void Reload_AnyEvent(object sender, RoutedEventArgs e) {
             try {
                 FillTableList();
             }
             catch (Exception ex) {
-                appBehind.AppendError(ex.Message, ex);
+                AppBehind.Get.AppendError(ex.Message, ex);
             }
         }
 
@@ -121,8 +111,10 @@ namespace rereSqlite___Headliner.Pages {
                 PerformQueryWholeTable((e.OriginalSource as TextBlock)?.Text);
             }
             catch (Exception ex) {
-                appBehind.AppendError(ex.Message, ex);
+                AppBehind.Get.AppendError(ex.Message, ex);
             }
         }
+
+        #endregion
     }
 }

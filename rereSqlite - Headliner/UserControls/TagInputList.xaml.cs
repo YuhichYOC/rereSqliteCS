@@ -26,12 +26,8 @@ using System.Windows;
 using System.Windows.Controls;
 
 namespace rereSqlite___Headliner.UserControls {
-    public partial class TagInputList : UserControl {
-        public delegate void TagChangeDelegate();
-
+    public partial class TagInputList {
         private const int MaxTagCount = 5;
-
-        private AppBehind appBehind;
 
         private List<object> candidates;
 
@@ -39,13 +35,11 @@ namespace rereSqlite___Headliner.UserControls {
 
         public TagInputList() {
             InitializeComponent();
+            candidates = new List<object>();
+            originalValues = new List<string>();
         }
 
-        public AppBehind AppBehind {
-            set => appBehind = value;
-        }
-
-        public TagChangeDelegate TagChanged { get; set; }
+        public Action TagChanged { get; set; }
 
         public void SetCandidates(List<object> arg) {
             candidates = arg;
@@ -118,6 +112,8 @@ namespace rereSqlite___Headliner.UserControls {
                 : (string) ((ComboBox) Tags.Children[i]).SelectedValue;
         }
 
+        #region -- Event Handlers --
+
         private void Selected(object sender, RoutedEventArgs e) {
             try {
                 RemoveDuplicate();
@@ -126,8 +122,10 @@ namespace rereSqlite___Headliner.UserControls {
                 TagChanged?.Invoke();
             }
             catch (Exception ex) {
-                appBehind.AppendError(ex.Message, ex);
+                AppBehind.Get.AppendError(ex.Message, ex);
             }
         }
+
+        #endregion
     }
 }

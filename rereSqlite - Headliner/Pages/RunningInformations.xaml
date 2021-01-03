@@ -11,6 +11,6 @@
             TextWrapping="Wrap"
             AcceptsReturn="True"
             VerticalScrollBarVisibility="Visible"
-            x:Name="informations" />
+            x:Name="Informations" />
     </Grid>
 </Page>

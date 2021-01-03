@@ -20,53 +20,78 @@
 */
 
 using System;
-using System.Windows;
 using System.Windows.Media;
 using rereSqlite___Headliner.Pages;
 
-/// <summary>
-///     Interaction logic for MainWindow.xaml
-/// </summary>
-public partial class MainWindow : Window {
-    public MainWindow() {
-        InitializeComponent();
-        Prepare();
-    }
+namespace rereSqlite___Headliner {
+    /// <summary>
+    ///     Interaction logic for MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow {
+        public MainWindow() {
+            InitializeComponent();
+            Prepare();
+        }
 
-    private static LogSpooler Logger { get; } = new LogSpooler();
+        private static LogSpooler Logger { get; } = new LogSpooler();
 
-    private static AppBehind AppBehind { get; } = new AppBehind();
+        private void Prepare() {
+            Height = AppBehind.Get.WindowHeight;
+            Width = AppBehind.Get.WindowWidth;
+            FontFamily = new FontFamily(AppBehind.Get.FontFamily);
+            FontSize = AppBehind.Get.FontSize;
+            Pager.AppendErrorDelegate += AppBehind.Get.AppendError;
+            Pager.FontFamily = new FontFamily(AppBehind.Get.FontFamily);
+            Pager.FontSize = AppBehind.Get.FontSize;
+            Pager.EnableRemovePage = false;
+            Pager.Init();
+            Pager.AddPage(AppBehind.Get.MainWindowCaptions.TabFileBrowse, new FileBrowse());
+            Pager.AddPage(AppBehind.Get.MainWindowCaptions.TabTableList, new TableList());
+            Pager.AddPage(AppBehind.Get.MainWindowCaptions.TabQueryStringInput, new QueryStringInput());
+            Pager.AddPage(AppBehind.Get.MainWindowCaptions.TabQueryResultViewList, new QueryResultViewList());
+            Pager.AddPage(AppBehind.Get.MainWindowCaptions.TabStringStorage, new StringStorage());
+            Pager.AddPage(AppBehind.Get.MainWindowCaptions.TabBinaryStorage, new BinaryStorage());
+            Pager.AddPage(AppBehind.Get.MainWindowCaptions.TabTagMaster, new TagMaster());
+            Pager.AddPage(AppBehind.Get.MainWindowCaptions.TabClone, new Clone());
+            Pager.AddPage(AppBehind.Get.MainWindowCaptions.TabRunningInformation, new RunningInformations());
+            AppBehind.Get.AppendError
+                += Logger.AppendError;
+            AppBehind.Get.AppendError
+                += ((RunningInformations) Pager.GetPage(AppBehind.Get.MainWindowCaptions.TabRunningInformation))
+                .AppendInfo;
+            AppBehind.Get.AppendInfo
+                += Logger.AppendInfo;
+            AppBehind.Get.AppendInfo
+                += ((RunningInformations) Pager.GetPage(AppBehind.Get.MainWindowCaptions.TabRunningInformation))
+                .AppendInfo;
+            AppBehind.Get.Reload
+                += ((TableList) Pager.GetPage(AppBehind.Get.MainWindowCaptions.TabTableList)).FillTableList;
+            AppBehind.Get.Reload
+                += ((BinaryStorage) Pager.GetPage(AppBehind.Get.MainWindowCaptions.TabBinaryStorage)).FillTagInput;
+            AppBehind.Get.Reload
+                += ((StringStorage) Pager.GetPage(AppBehind.Get.MainWindowCaptions.TabStringStorage)).FillTagInput;
+            AppBehind.Get.SetQueryString
+                += ((QueryStringInput) Pager.GetPage(AppBehind.Get.MainWindowCaptions.TabQueryStringInput))
+                .SetQueryString;
+            AppBehind.Get.AddPage
+                += ((QueryResultViewList) Pager.GetPage(AppBehind.Get.MainWindowCaptions.TabQueryResultViewList))
+                .AddPage;
+            ((FileBrowse) Pager.GetPage(AppBehind.Get.MainWindowCaptions.TabFileBrowse)).Init();
+            ((TableList) Pager.GetPage(AppBehind.Get.MainWindowCaptions.TabTableList)).Init();
+            ((QueryStringInput) Pager.GetPage(AppBehind.Get.MainWindowCaptions.TabQueryStringInput)).Init();
+            ((QueryResultViewList) Pager.GetPage(AppBehind.Get.MainWindowCaptions.TabQueryResultViewList)).Init();
+            ((StringStorage) Pager.GetPage(AppBehind.Get.MainWindowCaptions.TabStringStorage)).Init();
+            ((BinaryStorage) Pager.GetPage(AppBehind.Get.MainWindowCaptions.TabBinaryStorage)).Init();
+            ((TagMaster) Pager.GetPage(AppBehind.Get.MainWindowCaptions.TabTagMaster)).Init();
+            ((Clone) Pager.GetPage(AppBehind.Get.MainWindowCaptions.TabClone)).Init();
+            ((RunningInformations) Pager.GetPage(AppBehind.Get.MainWindowCaptions.TabRunningInformation)).Init();
+            Logger.SafeTicks = -1;
+            Logger.Start();
+            Pager.SwitchPage(0);
+        }
 
-    private void Prepare() {
-        Height = AppBehind.WindowHeight;
-        Width = AppBehind.WindowWidth;
-        FontFamily = new FontFamily(AppBehind.FontFamily);
-        FontSize = AppBehind.FontSize;
-        Pages.AppBehind = AppBehind;
-        Pages.AddPage(@"ファイルを開く", new FileBrowse {AppBehind = AppBehind});
-        Pages.AddPage(@"テーブル一覧", new TableList {AppBehind = AppBehind});
-        Pages.AddPage(@"クエリ実行", new QueryStringInput {AppBehind = AppBehind});
-        Pages.AddPage(@"問い合わせ結果", new QueryResultViewList {AppBehind = AppBehind});
-        Pages.AddPage(@"文字列データ", new StringStorage {AppBehind = AppBehind});
-        Pages.AddPage(@"バイナリデータ", new BinaryStorage {AppBehind = AppBehind});
-        Pages.AddPage(@"タグ", new TagMaster {AppBehind = AppBehind});
-        Pages.AddPage(@"クローン", new Clone {AppBehind = AppBehind});
-        Pages.AddPage(@"Informations", new RunningInformations {AppBehind = AppBehind});
-        AppBehind.AppendError += Logger.AppendError;
-        AppBehind.AppendError += ((RunningInformations) Pages.GetPage(@"Informations")).AppendInfo;
-        AppBehind.AppendInfo += Logger.AppendInfo;
-        AppBehind.AppendInfo += ((RunningInformations) Pages.GetPage(@"Informations")).AppendInfo;
-        AppBehind.Reload = ((TableList) Pages.GetPage(@"テーブル一覧")).FillTableList;
-        AppBehind.Reload += ((BinaryStorage) Pages.GetPage(@"バイナリデータ")).FillTagInput;
-        AppBehind.Reload += ((StringStorage) Pages.GetPage(@"文字列データ")).FillTagInput;
-        AppBehind.SetQueryString = ((QueryStringInput) Pages.GetPage(@"クエリ実行")).SetQueryString;
-        AppBehind.AddPage = ((QueryResultViewList) Pages.GetPage(@"問い合わせ結果")).AddPage;
-        Logger.SafeTicks = -1;
-        Logger.Start();
-        Pages.SwitchPage(0);
-    }
-
-    private void Window_Close(object sender, EventArgs e) {
-        Logger.Dispose();
+        private void Window_Close(object sender, EventArgs e) {
+            Logger.Dispose();
+        }
     }
 }

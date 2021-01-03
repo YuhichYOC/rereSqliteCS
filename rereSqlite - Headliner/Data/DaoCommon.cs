@@ -30,31 +30,30 @@ namespace rereSqlite___Headliner.Data {
 
         protected abstract string GetQuerySelect();
 
-        protected bool TableExists(AppBehind appBehind) {
+        protected bool TableExists() {
             using var accessor = new SqliteAccessor {
-                DataSource = appBehind.DBFilePath,
-                Password = appBehind.Password,
+                DataSource = AppBehind.Get.DBFilePath,
+                Password = AppBehind.Get.Password,
                 QueryString = GetQueryTableExists()
             };
             accessor.Open();
             return 0 < (long) accessor.ExecuteScalar(accessor.CreateCommand());
         }
 
-        protected void CreateTable(AppBehind appBehind) {
+        protected void CreateTable() {
             using var accessor = new SqliteAccessor {
-                DataSource = appBehind.DBFilePath,
-                Password = appBehind.Password,
+                DataSource = AppBehind.Get.DBFilePath,
+                Password = AppBehind.Get.Password,
                 QueryString = GetQueryCreateTable()
             };
             accessor.Open();
             accessor.Execute(accessor.CreateCommand());
         }
 
-        protected List<List<object>> Query(AppBehind appBehind, string query,
-            Dictionary<string, string> parameters) {
+        protected List<List<object>> Query(string query, Dictionary<string, string> parameters) {
             using var accessor = new SqliteAccessor {
-                DataSource = appBehind.DBFilePath,
-                Password = appBehind.Password,
+                DataSource = AppBehind.Get.DBFilePath,
+                Password = AppBehind.Get.Password,
                 QueryString = query
             };
             accessor.Open();
@@ -64,8 +63,8 @@ namespace rereSqlite___Headliner.Data {
             return CloneQueryResult(accessor.QueryResult);
         }
 
-        protected List<List<object>> Query(AppBehind appBehind, Dictionary<string, string> parameters) {
-            return Query(appBehind, GetQuerySelect(), parameters);
+        protected List<List<object>> Query(Dictionary<string, string> parameters) {
+            return Query(GetQuerySelect(), parameters);
         }
 
         private static List<List<object>> CloneQueryResult(List<List<object>> cloneFrom) {

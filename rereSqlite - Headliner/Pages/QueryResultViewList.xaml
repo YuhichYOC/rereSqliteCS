@@ -8,6 +8,6 @@
     mc:Ignorable="d"
     Title="QueryResultViewList">
     <Grid>
-        <global:TabPager x:Name="pager" />
+        <global:TabPager x:Name="Pager" />
     </Grid>
 </Page>

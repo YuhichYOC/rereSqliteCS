@@ -21,83 +21,75 @@
 
 using System;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
 using rereSqlite___Headliner.Accessor;
 
 namespace rereSqlite___Headliner.Pages {
-    public partial class QueryStringInput : Page {
-        private AppBehind appBehind;
-
+    public partial class QueryStringInput {
         private QueryChunk qc;
 
         public QueryStringInput() {
             InitializeComponent();
-            Prepare();
         }
 
-        public AppBehind AppBehind {
-            set {
-                appBehind = value;
-                FontFamily = new FontFamily(appBehind.FontFamily);
-                FontSize = appBehind.FontSize;
-            }
-        }
-
-        private void Prepare() {
-            executeButton.IsEnabled = true;
-            beginButton.IsEnabled = true;
-            commitButton.IsEnabled = false;
-            rollbackButton.IsEnabled = false;
+        public void Init() {
+            FontFamily = new FontFamily(AppBehind.Get.FontFamily);
+            FontSize = AppBehind.Get.FontSize;
+            ExecuteButton.IsEnabled = true;
+            BeginButton.IsEnabled = true;
+            CommitButton.IsEnabled = false;
+            RollbackButton.IsEnabled = false;
         }
 
         public void SetQueryString(string arg) {
-            queryInput.Text = arg;
+            QueryInput.Text = arg;
         }
 
         private void PerformExecute() {
             var openNew = !(null != qc && qc.TransactionAlreadyBegun);
             if (openNew) {
-                qc = new QueryChunk(appBehind);
+                qc = new QueryChunk();
                 qc.Open();
             }
 
-            qc.AddCommand(queryInput.Text);
+            qc.AddCommand(QueryInput.Text);
             qc.Execute();
             if (openNew) qc.Close();
         }
 
         private void PerformBegin() {
             qc?.Close();
-            qc = new QueryChunk(appBehind);
+            qc = new QueryChunk();
             qc.Begin();
-            beginButton.IsEnabled = false;
-            commitButton.IsEnabled = true;
-            rollbackButton.IsEnabled = true;
+            BeginButton.IsEnabled = false;
+            CommitButton.IsEnabled = true;
+            RollbackButton.IsEnabled = true;
         }
 
         private void PerformCommit() {
             qc.Commit();
             qc.Close();
-            beginButton.IsEnabled = true;
-            commitButton.IsEnabled = false;
-            rollbackButton.IsEnabled = false;
+            BeginButton.IsEnabled = true;
+            CommitButton.IsEnabled = false;
+            RollbackButton.IsEnabled = false;
         }
 
         private void PerformRollback() {
             qc.Rollback();
             qc.Close();
-            beginButton.IsEnabled = true;
-            commitButton.IsEnabled = false;
-            rollbackButton.IsEnabled = false;
+            BeginButton.IsEnabled = true;
+            CommitButton.IsEnabled = false;
+            RollbackButton.IsEnabled = false;
         }
+
+        #region -- Event Handlers --
 
         private void Execute_Click(object sender, RoutedEventArgs e) {
             try {
                 PerformExecute();
             }
             catch (Exception ex) {
-                appBehind.AppendError(ex.Message, ex);
+                AppBehind.Get.AppendError(ex.Message, ex);
             }
         }
 
@@ -106,7 +98,7 @@ namespace rereSqlite___Headliner.Pages {
                 PerformBegin();
             }
             catch (Exception ex) {
-                appBehind.AppendError(ex.Message, ex);
+                AppBehind.Get.AppendError(ex.Message, ex);
             }
         }
 
@@ -115,7 +107,7 @@ namespace rereSqlite___Headliner.Pages {
                 PerformCommit();
             }
             catch (Exception ex) {
-                appBehind.AppendError(ex.Message, ex);
+                AppBehind.Get.AppendError(ex.Message, ex);
             }
         }
 
@@ -124,8 +116,10 @@ namespace rereSqlite___Headliner.Pages {
                 PerformRollback();
             }
             catch (Exception ex) {
-                appBehind.AppendError(ex.Message, ex);
+                AppBehind.Get.AppendError(ex.Message, ex);
             }
         }
+
+        #endregion
     }
 }

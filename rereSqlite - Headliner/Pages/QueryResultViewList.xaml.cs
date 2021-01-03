@@ -19,35 +19,29 @@
 *
 */
 
-using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace rereSqlite___Headliner.Pages {
-    public partial class QueryResultViewList : Page {
-        private AppBehind appBehind;
-
+    public partial class QueryResultViewList {
         public QueryResultViewList() {
             InitializeComponent();
-            Prepare();
         }
 
-        public AppBehind AppBehind {
-            set {
-                appBehind = value;
-                FontFamily = new FontFamily(appBehind.FontFamily);
-                FontSize = appBehind.FontSize;
-                pager.AppBehind = appBehind;
-            }
-        }
-
-        private void Prepare() {
-            pager.EnableRemovePage = true;
+        public void Init() {
+            FontFamily = new FontFamily(AppBehind.Get.FontFamily);
+            FontSize = AppBehind.Get.FontSize;
+            Pager.AppendErrorDelegate += AppBehind.Get.AppendError;
+            Pager.FontFamily = new FontFamily(AppBehind.Get.FontFamily);
+            Pager.FontSize = AppBehind.Get.FontSize;
+            Pager.EnableRemovePage = true;
+            Pager.Init();
         }
 
         public void AddPage(SqliteAccessor accessor) {
-            var addPage = new QueryResultView {AppBehind = appBehind};
+            var addPage = new QueryResultView();
+            addPage.Init();
             addPage.Show(accessor);
-            pager.AddPage(@"Query " + (pager.PagesCount + 1), addPage);
+            Pager.AddPage(@"Query " + (Pager.PagesCount + 1), addPage);
         }
     }
 }

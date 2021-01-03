@@ -27,31 +27,36 @@ using rereSqlite___Headliner.Data;
 
 namespace rereSqlite___Headliner.UserControls {
     public partial class StringCard {
-        private AppBehind appBehind;
+        private string keyString;
+
+        private string valueString;
 
         public StringCard() {
             InitializeComponent();
-            Prepare();
         }
 
-        public AppBehind AppBehind {
+        public string Key {
+            get => keyString;
             set {
-                appBehind = value;
-                FontFamily = new FontFamily(appBehind.FontFamily);
-                FontSize = appBehind.FontSize;
-                TagInputList.AppBehind = appBehind;
-                TagInputList.TagChanged += TagChanged;
+                keyString = value;
+                KeyOutput.Content = keyString;
             }
         }
 
-        public string Key { get; set; }
-
-        public string Value { get; set; }
+        public string Value {
+            get => valueString;
+            set {
+                valueString = value;
+                ValueInput.Text = valueString;
+            }
+        }
 
         public string OriginalValue { get; set; }
 
-        private void Prepare() {
-            DataContext = this;
+        public void Init() {
+            FontFamily = new FontFamily(AppBehind.Get.FontFamily);
+            FontSize = AppBehind.Get.FontSize;
+            TagInputList.TagChanged += TagChanged;
             RegisterButton.IsEnabled = false;
         }
 
@@ -62,18 +67,18 @@ namespace rereSqlite___Headliner.UserControls {
 
         private bool AnyValueChanged() {
             if (string.IsNullOrEmpty(Value)) return false;
-            return !OriginalValue.Equals(Value) || TagInputList.AnyTagChanged();
+            return null != OriginalValue && !OriginalValue.Equals(Value) || TagInputList.AnyTagChanged();
         }
 
         private void Insert() {
-            StringStorage.Register(true, appBehind, Key, Value, TagInputList.GetTags());
+            StringStorage.Register(true, Key, Value, TagInputList.GetTags());
             OriginalValue = Value;
             TagInputList.Refresh();
             RegisterButton.IsEnabled = AnyValueChanged();
         }
 
         private void Update() {
-            StringStorage.Register(false, appBehind, Key, Value, TagInputList.GetTags());
+            StringStorage.Register(false, Key, Value, TagInputList.GetTags());
             OriginalValue = Value;
             TagInputList.Refresh();
             RegisterButton.IsEnabled = AnyValueChanged();
@@ -90,6 +95,8 @@ namespace rereSqlite___Headliner.UserControls {
             RegisterButton.IsEnabled = AnyValueChanged();
         }
 
+        #region -- Event Handlers --
+
         private void ValueInput_Change(object sender, RoutedEventArgs e) {
             Value = ValueInput.Text;
             RegisterButton.IsEnabled = AnyValueChanged();
@@ -100,8 +107,10 @@ namespace rereSqlite___Headliner.UserControls {
                 PerformRegister();
             }
             catch (Exception ex) {
-                appBehind.AppendError(ex.Message, ex);
+                AppBehind.Get.AppendError(ex.Message, ex);
             }
         }
+
+        #endregion
     }
 }

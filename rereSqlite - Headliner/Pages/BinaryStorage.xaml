@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:rereSqlite___Headliner"
     mc:Ignorable="d"
     Title="BinaryStorage">
     <Grid>
@@ -24,9 +25,8 @@
             </Grid.RowDefinitions>
             <Label
                 Grid.Row="0"
-                Margin="2">
-                キー
-            </Label>
+                Margin="2"
+                Content="{Binding Source={x:Static local:AppBehind.Get}, Path=BinaryStorageCaptions.KeyInput}" />
             <TextBox
                 Grid.Row="1"
                 Margin="2"
@@ -35,9 +35,8 @@
                 x:Name="KeyInput" />
             <Label
                 Grid.Row="2"
-                Margin="2">
-                タグ
-            </Label>
+                Margin="2"
+                Content="{Binding Source={x:Static local:AppBehind.Get}, Path=BinaryStorageCaptions.TagInput}" />
             <ComboBox
                 Grid.Row="3"
                 Margin="2"
@@ -47,9 +46,8 @@
             <Button
                 Grid.Row="4"
                 Margin="2"
-                Click="Search_Click">
-                検索
-            </Button>
+                Content="{Binding Source={x:Static local:AppBehind.Get}, Path=BinaryStorageCaptions.SearchButton}"
+                Click="Search_Click" />
         </Grid>
         <GridSplitter
             Grid.Column="0"
