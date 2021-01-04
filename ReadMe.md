@@ -105,5 +105,3 @@
 ![](https://github.com/YuhichYOC/rereSqlite---Headliner/blob/master/screen/07/5.PNG?raw=true)  
 ![](https://github.com/YuhichYOC/rereSqlite---Headliner/blob/master/screen/07/6.PNG?raw=true)  
 ![](https://github.com/YuhichYOC/rereSqlite---Headliner/blob/master/screen/07/7.PNG?raw=true)  
-![](https://github.com/YuhichYOC/rereSqlite---Headliner/blob/master/screen/07/8.PNG?raw=true)  
-![](https://github.com/YuhichYOC/rereSqlite---Headliner/blob/master/screen/07/9.PNG?raw=true)  
