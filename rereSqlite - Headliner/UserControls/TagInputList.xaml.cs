@@ -94,14 +94,8 @@ namespace rereSqlite___Headliner.UserControls {
 
         private void AddChild(string initialValue) {
             if (MaxTagCount <= Tags.Children.Count) return;
-            var add = new ComboBox();
-            add.Items.Add(new KeyValuePair<string, string>(@"", @""));
-            candidates.ForEach(c => { add.Items.Add(new KeyValuePair<string, string>(c.ToString(), c.ToString())); });
-            add.DisplayMemberPath = @"Value";
-            add.SelectedValuePath = @"Key";
-            add.SelectedValue = initialValue;
+            var add = new TagComboBox {SelectedValue = initialValue};
             add.SelectionChanged += Selected;
-            add.Margin = new Thickness(2);
             Tags.Children.Add(add);
         }
 

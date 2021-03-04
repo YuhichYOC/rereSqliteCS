@@ -67,9 +67,7 @@ namespace rereSqlite___Headliner {
             AppBehind.Get.Reload
                 += ((TableList) Pager.GetPage(AppBehind.Get.MainWindowCaptions.TabTableList)).FillTableList;
             AppBehind.Get.Reload
-                += ((BinaryStorage) Pager.GetPage(AppBehind.Get.MainWindowCaptions.TabBinaryStorage)).FillTagInput;
-            AppBehind.Get.Reload
-                += ((StringStorage) Pager.GetPage(AppBehind.Get.MainWindowCaptions.TabStringStorage)).FillTagInput;
+                += AppBehind.Get.ReloadTags;
             AppBehind.Get.SetQueryString
                 += ((QueryStringInput) Pager.GetPage(AppBehind.Get.MainWindowCaptions.TabQueryStringInput))
                 .SetQueryString;

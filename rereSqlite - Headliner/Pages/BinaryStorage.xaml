@@ -5,6 +5,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:rereSqlite___Headliner"
+    xmlns:userControls="clr-namespace:rereSqlite___Headliner.UserControls"
     mc:Ignorable="d"
     Title="BinaryStorage">
     <Grid>
@@ -37,12 +38,9 @@
                 Grid.Row="2"
                 Margin="2"
                 Content="{Binding Source={x:Static local:AppBehind.Get}, Path=BinaryStorageCaptions.TagInput}" />
-            <ComboBox
+            <userControls:TagComboBox
                 Grid.Row="3"
-                Margin="2"
-                x:Name="TagInput"
-                DisplayMemberPath="Value"
-                SelectedValuePath="Key" />
+                x:Name="TagInput" />
             <Button
                 Grid.Row="4"
                 Margin="2"

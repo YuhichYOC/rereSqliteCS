@@ -37,19 +37,6 @@ namespace rereSqlite___Headliner.Pages {
             FontSize = AppBehind.Get.FontSize;
         }
 
-        public void FillTagInput() {
-            TagInput.Items.Clear();
-            var add = new Data.TagMaster().Query()
-                .Aggregate(
-                    new List<KeyValuePair<string, string>>(),
-                    (ret, row) => {
-                        ret.Add(new KeyValuePair<string, string>(row[0].ToString(), row[0].ToString()));
-                        return ret;
-                    });
-            add.Insert(0, new KeyValuePair<string, string>(@"", @""));
-            add.ForEach(item => { TagInput.Items.Add(item); });
-        }
-
         private void Fill() {
             CardList.Children.Clear();
             var rows = new Data.BinaryStorage().Query(KeyInput.Text, TagInput.SelectedValue);

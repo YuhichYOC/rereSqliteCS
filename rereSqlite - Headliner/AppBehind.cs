@@ -21,7 +21,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using rereSqlite___Headliner.Data;
 using rereSqlite___Headliner.Localization;
+using rereSqlite___Headliner.UserControls;
 
 namespace rereSqlite___Headliner {
     public class AppBehind {
@@ -53,6 +56,9 @@ namespace rereSqlite___Headliner {
         }
 
         public static AppBehind Get { get; } = new AppBehind();
+
+        public static ObservableCollection<ComboBoxItem> Tags { get; set; }
+            = new ObservableCollection<ComboBoxItem>();
 
         public int WindowHeight { get; }
 
@@ -105,6 +111,13 @@ namespace rereSqlite___Headliner {
         public Action<string> SetQueryString { get; set; }
 
         public Action<SqliteAccessor> AddPage { get; set; }
+
+        public void ReloadTags() {
+            Tags.Clear();
+            Tags.Add(new ComboBoxItem(@"", @""));
+            var tItems = new TagMaster().Query();
+            tItems.ForEach(row => { Tags.Add(new ComboBoxItem(row[0].ToString(), row[0].ToString())); });
+        }
     }
 
     namespace Localization {
