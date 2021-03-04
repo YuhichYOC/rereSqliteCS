@@ -31,7 +31,7 @@ namespace rereSqlite___Headliner.Data {
 
         public List<List<object>> Query(string key, object tag) {
             return null == tag || string.IsNullOrEmpty(tag.ToString())
-                ? base.Query(QuerySelect, new Dictionary<string, string> {{@"@key", key}})
+                ? base.Query(SELECT, new Dictionary<string, string> {{@"@key", key}})
                 : base.Query(new Dictionary<string, string> {{@"@key", key}, {@"@tag", tag.ToString()}});
         }
 
@@ -44,7 +44,7 @@ namespace rereSqlite___Headliner.Data {
             using var accessor = new SqliteAccessor {
                 DataSource = AppBehind.Get.DBFilePath,
                 Password = AppBehind.Get.Password,
-                QueryString = insert ? QueryInsert : QueryUpdate
+                QueryString = insert ? INSERT : UPDATE
             };
             accessor.Open();
             var transaction = accessor.Begin();
@@ -63,20 +63,20 @@ namespace rereSqlite___Headliner.Data {
         }
 
         protected override string GetQueryTableExists() {
-            return QueryTableExists;
+            return TABLE_EXISTS;
         }
 
         protected override string GetQueryCreateTable() {
-            return QueryCreateTable;
+            return CREATE_TABLE;
         }
 
         protected override string GetQuerySelect() {
-            return QuerySelectWithTag;
+            return SELECT_WITH_TAG;
         }
 
         #region -- Query Strings --
 
-        private const string QueryTableExists =
+        private const string TABLE_EXISTS =
             @" SELECT                                                                         " +
             @"     COUNT(NAME) AS COUNT_TABLES                                                " +
             @" FROM                                                                           " +
@@ -85,7 +85,7 @@ namespace rereSqlite___Headliner.Data {
             @"     TYPE   = 'table'                                                           " +
             @" AND NAME   = 'STRING_STORAGE'                                                  ";
 
-        private const string QueryCreateTable =
+        private const string CREATE_TABLE =
             @" CREATE                                                                         " +
             @" TABLE                                                                          " +
             @"     STRING_STORAGE                                                             " +
@@ -98,11 +98,11 @@ namespace rereSqlite___Headliner.Data {
             @"       )                                                                        " +
             @"     )                                                                          ";
 
-        private const string QuerySelectWithTag =
-            QuerySelect +
+        private const string SELECT_WITH_TAG =
+            SELECT +
             @" AND T.TAG            = @tag                                                    ";
 
-        private const string QuerySelect =
+        private const string SELECT =
             @" SELECT                                                                         " +
             @"     S.KEY,                                                                     " +
             @"     S.VALUE,                                                                   " +
@@ -126,7 +126,7 @@ namespace rereSqlite___Headliner.Data {
             @" WHERE                                                                          " +
             @"     S.KEY            LIKE @key || '%'                                          ";
 
-        private const string QueryInsert =
+        private const string INSERT =
             @" INSERT                                                                         " +
             @" INTO                                                                           " +
             @"     STRING_STORAGE                                                             " +
@@ -140,7 +140,7 @@ namespace rereSqlite___Headliner.Data {
             @"     @value                                                                     " +
             @"     )                                                                          ";
 
-        private const string QueryUpdate =
+        private const string UPDATE =
             @" UPDATE                                                                         " +
             @"     STRING_STORAGE                                                             " +
             @" SET                                                                            " +

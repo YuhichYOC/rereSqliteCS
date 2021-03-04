@@ -33,11 +33,11 @@ namespace rereSqlite___Headliner.Data {
         }
 
         public static void Register(SqliteAccessor accessor, string key, List<object> tags) {
-            accessor.QueryString = QueryDelete;
+            accessor.QueryString = DELETE;
             var command = accessor.CreateCommand();
             command.Parameters.AddWithValue(@"@key", key);
             accessor.Execute(command);
-            accessor.QueryString = QueryInsert;
+            accessor.QueryString = INSERT;
             command = accessor.CreateCommand();
             for (var i = 0; tags.Count > i; ++i) {
                 command.Parameters.Clear();
@@ -48,20 +48,20 @@ namespace rereSqlite___Headliner.Data {
         }
 
         protected override string GetQueryTableExists() {
-            return QueryTableExists;
+            return TABLE_EXISTS;
         }
 
         protected override string GetQueryCreateTable() {
-            return QueryCreateTable;
+            return CREATE_TABLE;
         }
 
         protected override string GetQuerySelect() {
-            return QuerySelect;
+            return SELECT;
         }
 
         #region -- Query Strings --
 
-        private const string QueryTableExists =
+        private const string TABLE_EXISTS =
             @" SELECT                                                                         " +
             @"     COUNT(NAME) AS COUNT_TABLES                                                " +
             @" FROM                                                                           " +
@@ -70,7 +70,7 @@ namespace rereSqlite___Headliner.Data {
             @"     TYPE   = 'table'                                                           " +
             @" AND NAME   = 'BINARY_TAGS'                                                     ";
 
-        private const string QueryCreateTable =
+        private const string CREATE_TABLE =
             @" CREATE                                                                         " +
             @" TABLE                                                                          " +
             @"     BINARY_TAGS                                                                " +
@@ -102,7 +102,7 @@ namespace rereSqlite___Headliner.Data {
             @"       )                                                                        " +
             @"     )                                                                          ";
 
-        private const string QuerySelect =
+        private const string SELECT =
             @" SELECT                                                                         " +
             @"     TAG                                                                        " +
             @" FROM                                                                           " +
@@ -110,7 +110,7 @@ namespace rereSqlite___Headliner.Data {
             @" WHERE                                                                          " +
             @"     KEY   = @key                                                               ";
 
-        private const string QueryInsert =
+        private const string INSERT =
             @" INSERT                                                                         " +
             @" INTO                                                                           " +
             @"     BINARY_TAGS                                                                " +
@@ -124,7 +124,7 @@ namespace rereSqlite___Headliner.Data {
             @"     @tag                                                                       " +
             @"     )                                                                          ";
 
-        private const string QueryDelete =
+        private const string DELETE =
             @" DELETE                                                                         " +
             @" FROM                                                                           " +
             @"     BINARY_TAGS                                                                " +

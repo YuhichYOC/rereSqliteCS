@@ -35,14 +35,14 @@ namespace rereSqlite___Headliner.Data {
 
         public List<List<object>> Query(string tag) {
             var parameters = new Dictionary<string, string> {{@"@tag", tag}};
-            return Query(QuerySelectWithCondition, parameters);
+            return Query(SELECT_WITH_CONDITION, parameters);
         }
 
         public static void Register(bool insert, string newTag, string oldTag) {
             using var accessor = new SqliteAccessor {
                 DataSource = AppBehind.Get.DBFilePath,
                 Password = AppBehind.Get.Password,
-                QueryString = insert ? QueryInsert : QueryUpdate
+                QueryString = insert ? INSERT : UPDATE
             };
             accessor.Open();
             var command = accessor.CreateCommand();
@@ -52,20 +52,20 @@ namespace rereSqlite___Headliner.Data {
         }
 
         protected override string GetQueryTableExists() {
-            return QueryTableExists;
+            return TABLE_EXISTS;
         }
 
         protected override string GetQueryCreateTable() {
-            return QueryCreateTable;
+            return CREATE_TABLE;
         }
 
         protected override string GetQuerySelect() {
-            return QuerySelect;
+            return SELECT;
         }
 
         #region -- Query Strings --
 
-        private const string QueryTableExists =
+        private const string TABLE_EXISTS =
             @" SELECT                                                                         " +
             @"     COUNT(NAME) AS COUNT_TABLES                                                " +
             @" FROM                                                                           " +
@@ -74,7 +74,7 @@ namespace rereSqlite___Headliner.Data {
             @"     TYPE   = 'table'                                                           " +
             @" AND NAME   = 'TAG_MASTER'                                                      ";
 
-        private const string QueryCreateTable =
+        private const string CREATE_TABLE =
             @" CREATE                                                                         " +
             @" TABLE                                                                          " +
             @"     TAG_MASTER                                                                 " +
@@ -86,18 +86,18 @@ namespace rereSqlite___Headliner.Data {
             @"       )                                                                        " +
             @"     )                                                                          ";
 
-        private const string QuerySelect =
+        private const string SELECT =
             @" SELECT                                                                         " +
             @"     TAG                                                                        " +
             @" FROM                                                                           " +
             @"     TAG_MASTER                                                                 ";
 
-        private const string QuerySelectWithCondition =
-            QuerySelect +
+        private const string SELECT_WITH_CONDITION =
+            SELECT +
             @" WHERE                                                                          " +
             @"     TAG   LIKE @tag || '%'                                                     ";
 
-        private const string QueryInsert =
+        private const string INSERT =
             @" INSERT                                                                         " +
             @" INTO                                                                           " +
             @"     TAG_MASTER                                                                 " +
@@ -109,7 +109,7 @@ namespace rereSqlite___Headliner.Data {
             @"     @tag                                                                       " +
             @"     )                                                                          ";
 
-        private const string QueryUpdate =
+        private const string UPDATE =
             @" UPDATE                                                                         " +
             @"     TAG_MASTER                                                                 " +
             @" SET                                                                            " +

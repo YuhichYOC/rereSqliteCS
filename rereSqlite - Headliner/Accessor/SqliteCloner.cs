@@ -27,7 +27,7 @@ using Microsoft.Data.Sqlite;
 public class SqliteCloner {
     #region -- Query Strings --
 
-    private const string QuerySelectSqliteMaster =
+    private const string SELECT_SQLITE_MASTER =
         @" SELECT               " +
         @"     NAME,            " +
         @"     SQL              " +
@@ -80,7 +80,7 @@ public class SqliteCloner {
     }
 
     private void FetchTables() {
-        accessorFrom.QueryString = QuerySelectSqliteMaster;
+        accessorFrom.QueryString = SELECT_SQLITE_MASTER;
         accessorFrom.Execute(accessorFrom.CreateCommand());
         var queryResult = accessorFrom.QueryResult;
         queryResult.ForEach(row => {

@@ -59,17 +59,17 @@ public class LogSpooler {
     }
 
     private void OnUpdate(object arg) {
-        FlushAny(LogType.Error);
-        FlushAny(LogType.Warn);
-        FlushAny(LogType.Info);
+        FlushAny(LogType.ERROR);
+        FlushAny(LogType.WARN);
+        FlushAny(LogType.INFO);
         ticks++;
         if (0 < safeTicks && ticks >= safeTicks) Dispose();
     }
 
     private void FlushAny(LogType logType) {
-        if (LogType.Error == logType && 0 == errorLogLines.Count) return;
-        if (LogType.Warn == logType && 0 == warnLogLines.Count) return;
-        if (LogType.Info == logType && 0 == infoLogLines.Count) return;
+        if (LogType.ERROR == logType && 0 == errorLogLines.Count) return;
+        if (LogType.WARN == logType && 0 == warnLogLines.Count) return;
+        if (LogType.INFO == logType && 0 == infoLogLines.Count) return;
 
         var message = new StringBuilder();
         message.AppendLine();
@@ -84,18 +84,18 @@ public class LogSpooler {
         }
 
         var lastIndex = logType switch {
-            LogType.Error => errorLogLines.Count - 1,
-            LogType.Warn => warnLogLines.Count - 1,
+            LogType.ERROR => errorLogLines.Count - 1,
+            LogType.WARN => warnLogLines.Count - 1,
             _ => infoLogLines.Count - 1
         };
 
         switch (logType) {
-            case LogType.Error:
+            case LogType.ERROR:
                 LogManager.GetLogger(Assembly.GetCallingAssembly(), @"ErrorLog")
                     .Error(AppendedSubList(SubList(errorLogLines, lastIndex), message).ToString());
                 errorLogLines.RemoveRange(0, lastIndex + 1);
                 break;
-            case LogType.Warn:
+            case LogType.WARN:
                 LogManager.GetLogger(Assembly.GetCallingAssembly(), @"WarnLog")
                     .Warn(AppendedSubList(SubList(warnLogLines, lastIndex), message).ToString());
                 warnLogLines.RemoveRange(0, lastIndex + 1);
@@ -115,7 +115,7 @@ public class LogSpooler {
             errorLogLines.Add(message);
         }
         catch (Exception ex) {
-            HandleAppendException(LogType.Error, message, ex);
+            HandleAppendException(LogType.ERROR, message, ex);
         }
     }
 
@@ -126,7 +126,7 @@ public class LogSpooler {
             errorLogLines.Add(e.StackTrace);
         }
         catch (Exception ex) {
-            HandleAppendException(LogType.Error, message, ex);
+            HandleAppendException(LogType.ERROR, message, ex);
         }
     }
 
@@ -135,7 +135,7 @@ public class LogSpooler {
             warnLogLines.Add(message);
         }
         catch (Exception ex) {
-            HandleAppendException(LogType.Warn, message, ex);
+            HandleAppendException(LogType.WARN, message, ex);
         }
     }
 
@@ -144,15 +144,15 @@ public class LogSpooler {
             infoLogLines.Add(message);
         }
         catch (Exception ex) {
-            HandleAppendException(LogType.Info, message, ex);
+            HandleAppendException(LogType.INFO, message, ex);
         }
     }
 
     private void HandleAppendException(LogType logType, string message, Exception ex) {
         const string loggerName = @"LogOperatorLog";
         var description = @"Exception during " + logType switch {
-            LogType.Error => @"AppendError" + '\n',
-            LogType.Warn => @"AppendWarn" + '\n',
+            LogType.ERROR => @"AppendError" + '\n',
+            LogType.WARN => @"AppendWarn" + '\n',
             _ => @"AppendInfo" + '\n'
         };
         LogManager.GetLogger(Assembly.GetCallingAssembly(), loggerName).Error(description + message, ex);
@@ -160,14 +160,14 @@ public class LogSpooler {
 
     public void Dispose() {
         timer.Change(Timeout.Infinite, Timeout.Infinite);
-        FlushAny(LogType.Error);
-        FlushAny(LogType.Warn);
-        FlushAny(LogType.Info);
+        FlushAny(LogType.ERROR);
+        FlushAny(LogType.WARN);
+        FlushAny(LogType.INFO);
     }
 
     private enum LogType {
-        Error,
-        Warn,
-        Info
+        ERROR,
+        WARN,
+        INFO
     }
 }

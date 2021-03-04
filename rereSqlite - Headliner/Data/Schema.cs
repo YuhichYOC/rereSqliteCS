@@ -29,7 +29,7 @@ namespace rereSqlite___Headliner.Data {
         }
 
         public List<List<object>> Query(string filter) {
-            return Query(QuerySelectTable, new Dictionary<string, string> {{@"@filter", filter}});
+            return Query(SELECT_TABLE, new Dictionary<string, string> {{@"@filter", filter}});
         }
 
         public List<List<object>> QueryTableInfo(string tableName) {
@@ -37,7 +37,7 @@ namespace rereSqlite___Headliner.Data {
         }
 
         protected override string GetQuerySelect() {
-            return QuerySelect;
+            return SELECT;
         }
 
         protected override string GetQueryCreateTable() {
@@ -52,7 +52,7 @@ namespace rereSqlite___Headliner.Data {
 
         #region -- Query Strings --
 
-        private const string QuerySelect =
+        private const string SELECT =
             @" SELECT                                                                         " +
             @"     NAME,                                                                      " +
             @"     SQL                                                                        " +
@@ -63,7 +63,7 @@ namespace rereSqlite___Headliner.Data {
             @" ORDER BY                                                                       " +
             @"     NAME                                                                       ";
 
-        private const string QuerySelectTable =
+        private const string SELECT_TABLE =
             @" SELECT                                                                         " +
             @"     NAME,                                                                      " +
             @"     SQL                                                                        " +

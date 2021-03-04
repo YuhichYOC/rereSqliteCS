@@ -26,16 +26,16 @@ using System.IO;
 using Microsoft.Data.Sqlite;
 
 public class SqliteAccessor : IDisposable {
-    private const string TypeSqliteText = @"text";
-    private const string TypeSqliteInteger = @"integer";
-    private const string TypeSqliteReal = @"real";
-    private const string TypeSqliteBlob = @"blob";
+    private const string TYPE_SQLITE_TEXT = @"text";
+    private const string TYPE_SQLITE_INTEGER = @"integer";
+    private const string TYPE_SQLITE_REAL = @"real";
+    private const string TYPE_SQLITE_BLOB = @"blob";
 
-    private const string DotNetText = @"String";
-    private const string DotNetInteger = @"Integer";
-    private const string DotNetReal = @"Double";
-    private const string DotNetBlob = @"Object";
-    private const string DotNetOther = @"not supported";
+    private const string DOT_NET_TEXT = @"String";
+    private const string DOT_NET_INTEGER = @"Integer";
+    private const string DOT_NET_REAL = @"Double";
+    private const string DOT_NET_BLOB = @"Object";
+    private const string DOT_NET_OTHER = @"not supported";
 
     private string dataSource;
     private string password;
@@ -119,11 +119,11 @@ public class SqliteAccessor : IDisposable {
 
     private string TypeNameFromSqliteTypeName(string sqliteTypeName) {
         return sqliteTypeName.ToLower() switch {
-            TypeSqliteText => DotNetText,
-            TypeSqliteInteger => DotNetInteger,
-            TypeSqliteReal => DotNetReal,
-            TypeSqliteBlob => DotNetBlob,
-            _ => DotNetOther
+            TYPE_SQLITE_TEXT => DOT_NET_TEXT,
+            TYPE_SQLITE_INTEGER => DOT_NET_INTEGER,
+            TYPE_SQLITE_REAL => DOT_NET_REAL,
+            TYPE_SQLITE_BLOB => DOT_NET_BLOB,
+            _ => DOT_NET_OTHER
         };
     }
 
@@ -139,7 +139,7 @@ public class SqliteAccessor : IDisposable {
     }
 
     public bool IsBlobColumn(List<Tuple<string, string>> attributes, int column) {
-        return DotNetBlob.Equals(attributes[column].Item2);
+        return DOT_NET_BLOB.Equals(attributes[column].Item2);
     }
 
     public void RetrieveBlob(SqliteCommand command, FileStream outputStream, int blobColumn) {
