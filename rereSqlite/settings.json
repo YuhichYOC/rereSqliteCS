@@ -1,0 +1,44 @@
+{
+  "DbInfos": [
+    {
+      "Type": "Sqlserver",
+      "DataSource": "localhost",
+      "PortNumber": 1433,
+      "Tenant": "PT2023Take01",
+      "UserId": "sa",
+      "Password": "pt_pass01"
+    },
+    {
+      "Type": "Sqlite",
+      "DataSource": "C:\\Users\\yy\\workSpace\\test\\test2.sqlite",
+      "PortNumber": 0,
+      "Tenant": "",
+      "UserId": "test2",
+      "Password": "testpass"
+    },
+    {
+      "Type": "Postgres",
+      "DataSource": "localhost",
+      "PortNumber": 5432,
+      "Tenant": "sample",
+      "UserId": "worker01",
+      "Password": "psqlworkerpass01"
+    },
+    {
+      "Type": "Oracle",
+      "DataSource": "localhost",
+      "PortNumber": 1521,
+      "Tenant": "orcl.test.world",
+      "UserId": "scott",
+      "Password": "tiger"
+    }
+  ],
+  "DbTypes": [
+    "Sqlserver",
+    "Sqlite",
+    "Postgres",
+    "Oracle"
+  ],
+  "FontFamily": "Meiryo UI",
+  "FontSize": 11
+}

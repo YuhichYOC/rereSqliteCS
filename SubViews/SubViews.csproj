@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="DbSelectWindow\**" />
+    <Compile Remove="OfWindow\**" />
+    <EmbeddedResource Remove="DbSelectWindow\**" />
+    <EmbeddedResource Remove="OfWindow\**" />
+    <None Remove="DbSelectWindow\**" />
+    <None Remove="OfWindow\**" />
+    <Page Remove="DbSelectWindow\**" />
+    <Page Remove="OfWindow\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DatabaseAccessor\DatabaseAccessor.csproj" />
+    <ProjectReference Include="..\DbSelectWindow\DbSelectWindow.csproj" />
+    <ProjectReference Include="..\Formatter\Formatter.csproj" />
+    <ProjectReference Include="..\Logger\Logger.csproj" />
+  </ItemGroup>
+
+</Project>
